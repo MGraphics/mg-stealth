@@ -37,6 +37,8 @@ final class State {
 			'paths_verified' => false,
 			'map'            => array(), // Real URL path => alias URL path, as written to the server.
 			'flush_rewrite'  => false,
+			'emergency'      => false, // MG_STEALTH_DISABLE was seen; the rules are written back once it is gone.
+			'site'           => '', // Install the rules were written and verified for (see site_fingerprint()).
 			'checked_at'     => 0,
 		);
 	}
@@ -74,6 +76,25 @@ final class State {
 		$state       = array_merge( self::all(), $values );
 		self::$cache = $state;
 		update_option( self::OPTION, $state, true );
+	}
+
+	/**
+	 * Identifies this install: a copy moved to another server or address (e.g. deployed from a
+	 * local site together with its database and .htaccess) gets new rules before it uses them.
+	 *
+	 * @return string
+	 */
+	public static function site_fingerprint(): string {
+		return md5( ABSPATH . '|' . home_url( '/' ) . '|' . MG_STEALTH_FILE );
+	}
+
+	/**
+	 * Whether the stored rules and verification belong to this install.
+	 *
+	 * @return bool
+	 */
+	public static function matches_site(): bool {
+		return self::get( 'site' ) === self::site_fingerprint();
 	}
 
 	/**

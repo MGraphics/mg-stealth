@@ -183,7 +183,7 @@ final class Paths {
 	 * @return bool
 	 */
 	public static function active(): bool {
-		return Settings::on( 'paths_enabled' ) && State::get( 'paths_verified' ) && ! empty( State::get( 'map' ) );
+		return Settings::on( 'paths_enabled' ) && State::get( 'paths_verified' ) && ! empty( State::get( 'map' ) ) && State::matches_site();
 	}
 
 	/**

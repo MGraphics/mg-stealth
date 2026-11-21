@@ -109,12 +109,30 @@ final class Plugin {
 		$this->cleaner->register();
 
 		add_action( 'init', array( $this, 'maybe_flush_rewrite_rules' ), 999 );
+		add_action( 'init', array( $this, 'after_emergency' ), 1000 );
 		add_action( 'update_option_' . Settings::OPTION, array( $this, 'on_settings_updated' ), 10, 2 );
 		add_action( 'add_option_' . Settings::OPTION, array( $this, 'on_settings_added' ), 10, 2 );
 		foreach ( array( 'activated_plugin', 'deactivated_plugin', 'switch_theme', 'upgrader_process_complete' ) as $hook ) {
 			add_action( $hook, array( $this, 'request_sync' ) );
 		}
 		add_action( 'shutdown', array( $this, 'run_pending_sync' ) );
+		add_action( 'init', array( $this, 'detect_moved_site' ), 1001 );
+	}
+
+	/**
+	 * A copy of the site on another server or address (database and .htaccess deployed from a
+	 * local site): the stored rules belong to the old place, so the original paths are used and
+	 * the rules are rewritten and verified here at the end of this request (at most every 5 minutes).
+	 */
+	public function detect_moved_site(): void {
+		if ( 'none' === State::get( 'rules_status' ) && ! Settings::on( 'paths_enabled' ) ) {
+			return;
+		}
+		if ( State::matches_site() || Request::is_cli() || get_transient( 'mg_stealth_resync' ) ) {
+			return;
+		}
+		set_transient( 'mg_stealth_resync', 1, 5 * MINUTE_IN_SECONDS );
+		$this->sync_pending = true;
 	}
 
 	/**
@@ -158,9 +176,26 @@ final class Plugin {
 	 * Emergency constant: remove the server block once.
 	 */
 	public function emergency_cleanup(): void {
-		if ( 'none' !== State::get( 'rules_status' ) || null !== Htaccess::extract_block( Server_Rules::read() ) ) {
+		if ( ! State::get( 'emergency' ) || null !== Htaccess::extract_block( Server_Rules::read() ) ) {
 			Server_Rules::remove();
 			delete_option( 'rewrite_rules' );
+			Request::forget_404_page();
+			State::update( array( 'emergency' => true ) );
+		}
+	}
+
+	/**
+	 * The emergency constant was removed again: write the server rules back once.
+	 */
+	public function after_emergency(): void {
+		if ( State::get( 'emergency' ) ) {
+			State::update(
+				array(
+					'emergency'     => false,
+					'flush_rewrite' => true,
+				)
+			);
+			Server_Rules::sync();
 		}
 	}
 

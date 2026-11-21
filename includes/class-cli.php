@@ -46,6 +46,8 @@ final class CLI {
 	/**
 	 * Removes the .htaccess block (emergency).
 	 *
+	 * @subcommand remove-rules
+	 *
 	 * @param array $args       Positional arguments.
 	 * @param array $assoc_args Named arguments.
 	 */

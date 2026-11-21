@@ -248,6 +248,7 @@ final class Server_Rules {
 			'paths_verified' => false,
 			'map'            => array(),
 			'checked_at'     => time(),
+			'site'           => State::site_fingerprint(),
 		);
 
 		if ( 'written' === $result['status'] && ! empty( $aliases ) ) {
@@ -286,6 +287,7 @@ final class Server_Rules {
 				'paths_verified' => $ok,
 				'map'            => $ok ? Paths::output_map( $aliases ) : array(),
 				'checked_at'     => time(),
+				'site'           => State::site_fingerprint(),
 			)
 		);
 		return $ok;
