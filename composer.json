@@ -1,0 +1,21 @@
+{
+	"name": "mgraphics/mg-stealth",
+	"description": "MG Stealth – a WordPress plugin that hides the signs of WordPress.",
+	"type": "wordpress-plugin",
+	"license": "GPL-2.0-or-later",
+	"authors": [
+		{ "name": "MGraphics", "homepage": "https://mgraphics.com.pl" }
+	],
+	"require": {
+		"php": ">=7.4"
+	},
+	"require-dev": {
+		"phpunit/phpunit": "^11.5"
+	},
+	"scripts": {
+		"test": "phpunit"
+	},
+	"config": {
+		"sort-packages": true
+	}
+}

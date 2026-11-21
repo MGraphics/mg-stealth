@@ -1,5 +1,9 @@
 node_modules/
 .DS_Store
 *.sql
-vendor/
-.local/
+/vendor/
+/build/
+/.local/
+.phpunit.result.cache
+.claude/settings.local.json
+/.phpunit.cache/

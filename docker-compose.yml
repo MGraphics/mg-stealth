@@ -1,0 +1,65 @@
+# Development and test environment (not part of the plugin package).
+# Start: bin/dev-setup.sh  ·  Site: http://127.0.0.1:8476  ·  Stop: docker compose down (-v removes the data).
+name: mg-stealth
+
+services:
+  db:
+    image: mariadb:10.11
+    environment:
+      MARIADB_DATABASE: wordpress
+      MARIADB_USER: wordpress
+      MARIADB_PASSWORD: wordpress
+      MARIADB_ROOT_PASSWORD: root
+    volumes:
+      - db:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 3s
+      timeout: 5s
+      retries: 30
+
+  wordpress:
+    image: wordpress:php8.4-apache
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "127.0.0.1:8476:8476"
+    environment:
+      WORDPRESS_DB_HOST: db
+      WORDPRESS_DB_USER: wordpress
+      WORDPRESS_DB_PASSWORD: wordpress
+      WORDPRESS_DB_NAME: wordpress
+      WORDPRESS_CONFIG_EXTRA: |
+        define( 'WP_ENVIRONMENT_TYPE', 'local' );
+        define( 'FS_METHOD', 'direct' );
+    volumes:
+      - wp:/var/www/html
+      - ./:/var/www/html/wp-content/plugins/mg-stealth:ro
+      - ./docker/mu-plugins:/var/www/html/wp-content/mu-plugins:ro
+      # The site answers on the same port inside the container, so loopback requests
+      # (self-check, verification of the server rules) reach it at its public address.
+      - ./docker/apache-ports.conf:/etc/apache2/ports.conf:ro
+      - ./docker/apache-site.conf:/etc/apache2/sites-available/000-default.conf:ro
+
+  cli:
+    image: wordpress:cli-php8.4
+    profiles: ["cli"]
+    user: "33:33"
+    # Same network as the site, so loopback requests to 127.0.0.1:8476 reach Apache.
+    network_mode: "service:wordpress"
+    depends_on:
+      - wordpress
+    environment:
+      WORDPRESS_DB_HOST: db
+      WORDPRESS_DB_USER: wordpress
+      WORDPRESS_DB_PASSWORD: wordpress
+      WORDPRESS_DB_NAME: wordpress
+    volumes:
+      - wp:/var/www/html
+      - ./:/var/www/html/wp-content/plugins/mg-stealth:ro
+      - ./docker/mu-plugins:/var/www/html/wp-content/mu-plugins:ro
+
+volumes:
+  db:
+  wp:

@@ -1,0 +1,21 @@
+/* Settings screen. The class name .mg-stealth-admin is also how the plugin recognises this file through its neutral address. */
+.mg-stealth-admin .mgs-lead { max-width: 52rem; font-size: 14px; }
+.mg-stealth-admin .mgs-status { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0 16px; }
+.mg-stealth-admin .mgs-status li { margin: 0; padding: 6px 10px; border: 1px solid #c3c4c7; border-left-width: 4px; border-radius: 2px; background: #fff; }
+.mg-stealth-admin .mgs-status li span { color: #50575e; }
+.mg-stealth-admin .mgs-status .mgs-ok { border-left-color: #00a32a; }
+.mg-stealth-admin .mgs-status .mgs-warn { border-left-color: #dba617; }
+.mg-stealth-admin .mgs-status .mgs-off { border-left-color: #8c8f94; }
+.mg-stealth-admin .mgs-tab { max-width: 70rem; }
+.mg-stealth-admin .mgs-before { margin-right: 2px; padding: 4px 2px; background: none; color: #50575e; }
+.mg-stealth-admin .mgs-code { font-size: 12px; line-height: 1.5; white-space: pre; }
+.mg-stealth-admin .mgs-inline-form { margin: 0 0 24px; }
+.mg-stealth-admin .mgs-login-url code { display: inline-block; margin-top: 4px; font-size: 14px; }
+.mg-stealth-admin .mgs-results td, .mg-stealth-admin .mgs-results th { vertical-align: top; }
+.mg-stealth-admin .mgs-results details ul { margin: 4px 0 8px 16px; }
+.mg-stealth-admin .mgs-results code { word-break: break-all; }
+.mg-stealth-admin td.mgs-ok, .mg-stealth-admin span.mgs-ok { color: #007017; }
+.mg-stealth-admin td.mgs-warn { color: #996800; }
+.mg-stealth-admin td.mgs-bad, .mg-stealth-admin p.mgs-bad { color: #b32d2e; font-weight: 600; }
+.mg-stealth-admin td.mgs-off { color: #50575e; }
+.mg-stealth-admin .mgs-footer { margin-top: 32px; color: #646970; }

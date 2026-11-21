@@ -1,0 +1,702 @@
+# Polish translation of MG Stealth.
+# This file is distributed under the GPL-2.0-or-later.
+msgid ""
+msgstr ""
+"Project-Id-Version: MG Stealth 1.0.0\n"
+"Report-Msgid-Bugs-To: https://gitlab.com/mgraphics/mg-stealth/-/issues\n"
+"Last-Translator: MGraphics\n"
+"Language-Team: MGraphics\n"
+"PO-Revision-Date: 2026-11-21 21:00+0100\n"
+"Language: pl_PL\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<12 || n%100>14) ? 1 : 2);\n"
+"X-Domain: mg-stealth\n"
+
+#. Plugin Name of the plugin
+#: mg-stealth.php
+msgid "MG Stealth"
+msgstr "MG Stealth"
+
+#. Plugin URI of the plugin
+#: mg-stealth.php
+msgid "https://mgraphics.com.pl/mg-stealth/"
+msgstr "https://mgraphics.com.pl/mg-stealth/"
+
+#. Description of the plugin
+#: mg-stealth.php
+msgid "Makes it hard to tell that a site runs WordPress: clean page source and headers, neutral public paths, a private login address, closed REST API for guests, the normal 404 page for typical WordPress addresses and one-hop 301 redirects to https and the main host name."
+msgstr "Utrudnia rozpoznanie, że strona działa na WordPressie: czyste źródło strony i nagłówki, neutralne ścieżki publiczne, prywatny adres logowania, REST API zamknięte dla gości, zwykła strona 404 pod typowymi adresami WordPressa oraz przekierowania 301 w jednym kroku na https i główną nazwę domeny."
+
+#. Author of the plugin
+#: mg-stealth.php
+msgid "MGraphics"
+msgstr "MGraphics"
+
+#. Author URI of the plugin
+#: mg-stealth.php
+msgid "https://mgraphics.com.pl"
+msgstr "https://mgraphics.com.pl"
+
+#: includes/class-admin.php:72
+msgid "Settings"
+msgstr "Ustawienia"
+
+#: includes/class-admin.php:92
+msgid "You are not allowed to do this."
+msgstr "Nie masz uprawnień do tej operacji."
+
+#: includes/class-admin.php:113
+msgid "<strong>MG Stealth is switched off</strong> by the MG_STEALTH_DISABLE constant in wp-config.php: no rules are active and the .htaccess block has been removed. Delete the constant to switch it on again."
+msgstr "<strong>MG Stealth jest wyłączona</strong> stałą MG_STEALTH_DISABLE w wp-config.php: żadna reguła nie działa, a blok w .htaccess został usunięty. Usuń stałą, aby ją ponownie włączyć."
+
+#: includes/class-admin.php:117
+msgid "MG Stealth: WPS Hide Login is active as well. Deactivate it; MG Stealth already serves the login form at the private address."
+msgstr "MG Stealth: włączona jest też wtyczka WPS Hide Login. Wyłącz ją – MG Stealth sama pokazuje formularz logowania pod prywatnym adresem."
+
+#: includes/class-admin.php:129
+msgid "Page source"
+msgstr "Źródło strony"
+
+#: includes/class-admin.php:130
+msgid "Paths"
+msgstr "Ścieżki"
+
+#: includes/class-admin.php:131
+msgid "Login"
+msgstr "Logowanie"
+
+#: includes/class-admin.php:132
+msgid "Access"
+msgstr "Dostęp"
+
+#: includes/class-admin.php:133
+msgid "Redirects"
+msgstr "Przekierowania"
+
+#: includes/class-admin.php:134
+msgid "Check"
+msgstr "Sprawdź"
+
+#: includes/class-admin.php:135
+msgid "Help"
+msgstr "Pomoc"
+
+#: includes/class-admin.php:144
+msgid "Makes it hard to tell from the page source and the usual addresses that this site runs WordPress. Every change can be undone: deactivating the plugin restores WordPress' defaults."
+msgstr "Utrudnia rozpoznanie po źródle strony i typowych adresach, że ta strona działa na WordPressie. Każdą zmianę można cofnąć: wyłączenie wtyczki przywraca domyślne ustawienia WordPressa."
+
+#: includes/class-admin.php:190
+msgid "not needed"
+msgstr "niepotrzebne"
+
+#: includes/class-admin.php:191
+msgid "written to .htaccess"
+msgstr "zapisane w .htaccess"
+
+#: includes/class-admin.php:192
+msgid "to be copied by hand"
+msgstr "do skopiowania ręcznie"
+
+#: includes/class-admin.php:193
+msgid "rejected by the server"
+msgstr "odrzucone przez serwer"
+
+#: includes/class-admin.php:196
+#: includes/class-admin.php:342
+msgid "Server rules"
+msgstr "Reguły serwera"
+
+#: includes/class-admin.php:201
+#: includes/class-admin.php:203
+#: includes/class-admin.php:321
+msgid "Neutral paths"
+msgstr "Neutralne ścieżki"
+
+#: includes/class-admin.php:201
+msgid "active"
+msgstr "działają"
+
+#: includes/class-admin.php:201
+msgid "waiting for the server rules"
+msgstr "czekają na reguły serwera"
+
+#: includes/class-admin.php:203
+#: includes/class-admin.php:205
+msgid "off"
+msgstr "wyłączone"
+
+#: includes/class-admin.php:205
+msgid "Private login"
+msgstr "Prywatne logowanie"
+
+#: includes/class-admin.php:205
+msgid "on"
+msgstr "włączone"
+
+#: includes/class-admin.php:206
+msgid "REST API for guests"
+msgstr "REST API dla gości"
+
+#: includes/class-admin.php:206
+msgid "closed (allow-list)"
+msgstr "zamknięte (lista wyjątków)"
+
+#: includes/class-admin.php:206
+msgid "open"
+msgstr "otwarte"
+
+#: includes/class-admin.php:255
+msgid "On"
+msgstr "Włączone"
+
+#: includes/class-admin.php:294
+msgid "What WordPress and plugins print into every page and header. Visitors get the cleaned version; signed-in users see the normal one."
+msgstr "To, co WordPress i wtyczki wpisują do każdej strony i nagłówka. Goście dostają wersję oczyszczoną, zalogowani widzą zwykłą."
+
+#: includes/class-admin.php:296
+msgid "Head tags"
+msgstr "Znaczniki w <head>"
+
+#: includes/class-admin.php:296
+msgid "Removes the generator tags (of WordPress and of plugins), RSD, wlwmanifest, shortlink, pingback and the REST API discovery link."
+msgstr "Usuwa znaczniki generatora (WordPressa i wtyczek), RSD, wlwmanifest, shortlink, pingback i link do REST API."
+
+#: includes/class-admin.php:297
+msgid "Versions in asset addresses"
+msgstr "Wersje w adresach plików"
+
+#: includes/class-admin.php:297
+msgid "Replaces <code>?ver=7.1.5</code> with a short per-site code (<code>?v=1a2b3c4d</code>): browsers still get fresh files after updates, but the address no longer tells the version."
+msgstr "Zamienia <code>?ver=7.1.5</code> na krótki kod tej strony (<code>?v=1a2b3c4d</code>): po aktualizacji przeglądarki nadal pobiorą nowe pliki, ale adres nie zdradza już wersji."
+
+#: includes/class-admin.php:298
+msgid "Emoji script"
+msgstr "Skrypt emoji"
+
+#: includes/class-admin.php:298
+msgid "Removes the emoji detection script and styles (browsers show emoji on their own)."
+msgstr "Usuwa skrypt i style wykrywania emoji (przeglądarki same wyświetlają emoji)."
+
+#: includes/class-admin.php:299
+msgid "oEmbed"
+msgstr "oEmbed"
+
+#: includes/class-admin.php:299
+msgid "Removes the oEmbed discovery links and the embed script; /embed/ addresses become the 404 page."
+msgstr "Usuwa linki oEmbed i skrypt osadzania; adresy /embed/ dają stronę 404."
+
+#: includes/class-admin.php:300
+msgid "HTTP headers"
+msgstr "Nagłówki HTTP"
+
+#: includes/class-admin.php:300
+msgid "Removes <code>X-Powered-By</code>, <code>X-Pingback</code>, <code>X-Redirect-By</code>, the REST API and shortlink <code>Link</code> headers and the well-known 1984 <code>Expires</code> date."
+msgstr "Usuwa <code>X-Powered-By</code>, <code>X-Pingback</code>, <code>X-Redirect-By</code>, nagłówki <code>Link</code> REST API i shortlinku oraz charakterystyczną datę <code>Expires</code> z 1984 roku."
+
+#: includes/class-admin.php:301
+msgid "Asset tag ids"
+msgstr "Identyfikatory znaczników plików"
+
+#: includes/class-admin.php:301
+msgid "Removes the WordPress-style ids such as <code>id=\"wp-block-library-css\"</code> from link, style and script tags."
+msgstr "Usuwa identyfikatory w stylu WordPressa, np. <code>id=\"wp-block-library-css\"</code>, ze znaczników link, style i script."
+
+#: includes/class-admin.php:302
+msgid "Body and comment classes"
+msgstr "Klasy <body> i komentarzy"
+
+#: includes/class-admin.php:302
+msgid "Removes <code>wp-theme-…</code>, <code>wp-child-theme-…</code>, <code>wp-singular</code> and the author login classes. Block classes (<code>wp-block-…</code>) stay, styles depend on them."
+msgstr "Usuwa <code>wp-theme-…</code>, <code>wp-child-theme-…</code>, <code>wp-singular</code> i klasy z loginem autora. Klasy bloków (<code>wp-block-…</code>) zostają, bo zależą od nich style."
+
+#: includes/class-admin.php:303
+msgid "HTML comments"
+msgstr "Komentarze HTML"
+
+#: includes/class-admin.php:303
+msgid "Removes HTML comments (plugin signatures, cache notes); scripts, styles and conditional comments are left untouched."
+msgstr "Usuwa komentarze HTML (podpisy wtyczek, notki pamięci podręcznej); skrypty, style i komentarze warunkowe zostają nietknięte."
+
+#: includes/class-admin.php:304
+msgid "Speculation rules"
+msgstr "Reguły wczytywania z wyprzedzeniem"
+
+#: includes/class-admin.php:304
+msgid "Removes WordPress' prefetch rules, which list its folders."
+msgstr "Usuwa reguły prefetch WordPressa, które wymieniają jego katalogi."
+
+#: includes/class-admin.php:305
+msgid "Login page branding"
+msgstr "Wygląd strony logowania"
+
+#: includes/class-admin.php:305
+msgid "The site icon and name instead of the WordPress logo, titles without \"WordPress\"."
+msgstr "Ikona i nazwa strony zamiast logo WordPressa, tytuły bez „WordPress”."
+
+#: includes/class-admin.php:306
+msgid "E-mails"
+msgstr "E-maile"
+
+#: includes/class-admin.php:306
+msgid "Messages are sent as the site name instead of \"WordPress\" and without the <code>X-Mailer: PHPMailer</code> header."
+msgstr "Wiadomości wychodzą jako nazwa strony zamiast „WordPress” i bez nagłówka <code>X-Mailer: PHPMailer</code>."
+
+#: includes/class-admin.php:316
+msgid "Visitors get neutral addresses instead of /wp-content/, /wp-includes/ and /wp-json/. The files stay where they are: the server maps the new names back (a block in .htaccess, Apache and LiteSpeed). The new addresses are used only after the plugin has checked that they answer."
+msgstr "Goście dostają neutralne adresy zamiast /wp-content/, /wp-includes/ i /wp-json/. Pliki zostają na miejscu: serwer tłumaczy nowe nazwy na prawdziwe (blok w .htaccess, Apache i LiteSpeed). Nowe adresy są używane dopiero wtedy, gdy wtyczka sprawdzi, że działają."
+
+#: includes/class-admin.php:318
+msgid "This server does not read .htaccess files. Use the wp-config.php snippet below for a real move of the folders instead."
+msgstr "Ten serwer nie czyta plików .htaccess. Zamiast aliasów użyj fragmentu wp-config.php poniżej i naprawdę przenieś katalogi."
+
+#: includes/class-admin.php:321
+msgid "Switches the aliases below on. The names were drawn for this site, so two sites with this plugin do not look alike; change them freely."
+msgstr "Włącza poniższe aliasy. Nazwy zostały wylosowane dla tej strony, więc dwie strony z tą wtyczką nie wyglądają tak samo; można je dowolnie zmienić."
+
+#: includes/class-admin.php:323
+msgid "Content folder"
+msgstr "Katalog treści"
+
+#: includes/class-admin.php:324
+msgid "Themes"
+msgstr "Motywy"
+
+#: includes/class-admin.php:325
+msgid "Plugins"
+msgstr "Wtyczki"
+
+#: includes/class-admin.php:326
+msgid "Uploads (media)"
+msgstr "Pliki (media)"
+
+#: includes/class-admin.php:327
+msgid "Core scripts and styles"
+msgstr "Skrypty i style rdzenia"
+
+#: includes/class-admin.php:328
+msgid "AJAX address"
+msgstr "Adres AJAX"
+
+#: includes/class-admin.php:329
+msgid "Comment form address"
+msgstr "Adres formularza komentarzy"
+
+#: includes/class-admin.php:330
+msgid "REST API prefix"
+msgstr "Prefiks REST API"
+
+#. translators: %s: original path
+#: includes/class-admin.php:334
+#, php-format
+msgid "Instead of <code>/%s</code>."
+msgstr "Zamiast <code>/%s</code>."
+
+#: includes/class-admin.php:336
+msgid "Hide folder names"
+msgstr "Ukryj nazwy katalogów"
+
+#: includes/class-admin.php:336
+msgid "Plugin and theme folders get short per-site codes (e.g. <code>/assets/ext/9f3a1c2b/</code>), so their names do not give the plugins away."
+msgstr "Katalogi wtyczek i motywu dostają krótkie kody tej strony (np. <code>/assets/ext/9f3a1c2b/</code>), więc ich nazwy nie zdradzają, jakie to wtyczki."
+
+#: includes/class-admin.php:337
+msgid "Hide the original paths"
+msgstr "Ukryj oryginalne ścieżki"
+
+#: includes/class-admin.php:337
+msgid "For visitors without a session /wp-includes/, /wp-content/ (with the plugin and theme folders) and the admin AJAX file answer with the normal 404 page. Files in uploads stay reachable under their old address too (links in old content, CSS files of page builders)."
+msgstr "Dla gości bez sesji /wp-includes/, /wp-content/ (z katalogami wtyczek i motywów) oraz plik AJAX panelu odpowiadają zwykłą stroną 404. Pliki w uploads działają też pod starym adresem (linki w starszych treściach, pliki CSS kreatorów stron)."
+
+#: includes/class-admin.php:343
+msgid "The plugin keeps this block at the very top of .htaccess (between \"# BEGIN MG Stealth\" and \"# END MG Stealth\"). If the file is not writable, paste it there by hand and press \"Check again\"."
+msgstr "Wtyczka trzyma ten blok na samej górze .htaccess (między „# BEGIN MG Stealth” a „# END MG Stealth”). Jeśli plik nie jest zapisywalny, wklej blok ręcznie i kliknij „Zapisz i sprawdź reguły serwera ponownie”."
+
+#: includes/class-admin.php:346
+msgid "Real move (optional)"
+msgstr "Prawdziwe przeniesienie (opcjonalnie)"
+
+#: includes/class-admin.php:347
+msgid "Instead of aliases the folders can be really renamed. This needs access to the files and the database; the plugin does not do it for you. After the move the matching aliases are simply not needed."
+msgstr "Zamiast aliasów można naprawdę zmienić nazwy katalogów. Potrzebny jest dostęp do plików i bazy danych; wtyczka nie robi tego sama. Po przeniesieniu odpowiednie aliasy po prostu przestają być potrzebne."
+
+#: includes/class-admin.php:348
+msgid "(above the line \"That's all, stop editing!\")"
+msgstr "(nad linią „That's all, stop editing!”)"
+
+#: includes/class-admin.php:350
+msgid "Commands (WP-CLI)"
+msgstr "Polecenia (WP-CLI)"
+
+#: includes/class-admin.php:364
+msgid "Write and check the server rules again"
+msgstr "Zapisz i sprawdź reguły serwera ponownie"
+
+#: includes/class-admin.php:372
+msgid "The login form moves to a private address. For everyone else wp-login.php, and the admin area for visitors without a session, answer with the normal 404 page. The address is never printed on public pages; login links for visitors point to the home page."
+msgstr "Formularz logowania przenosi się pod prywatny adres. Dla wszystkich innych wp-login.php, a dla gości bez sesji także panel, odpowiadają zwykłą stroną 404. Adres nigdy nie pojawia się na publicznych stronach; linki logowania dla gości prowadzą na stronę główną."
+
+#: includes/class-admin.php:374
+msgid "The private login is not available on multisite networks."
+msgstr "Prywatne logowanie nie działa w sieci multisite."
+
+#: includes/class-admin.php:377
+msgid "Your login address (save it in your bookmarks and password manager):"
+msgstr "Twój adres logowania (zapisz go w zakładkach i w menedżerze haseł):"
+
+#: includes/class-admin.php:380
+msgid "Private login address"
+msgstr "Prywatny adres logowania"
+
+#: includes/class-admin.php:380
+msgid "After saving, the old login address stops working at once. If you lose the new one: WP-CLI <code>wp mg-stealth login-url</code>, or define <code>MG_STEALTH_DISABLE</code> in wp-config.php (Help tab)."
+msgstr "Po zapisaniu stary adres logowania od razu przestaje działać. Jeśli zgubisz nowy: WP-CLI <code>wp mg-stealth login-url</code> albo stała <code>MG_STEALTH_DISABLE</code> w wp-config.php (zakładka Pomoc)."
+
+#: includes/class-admin.php:381
+#: includes/class-admin.php:468
+msgid "Address"
+msgstr "Adres"
+
+#: includes/class-admin.php:381
+msgid "At least 6 characters; letters, digits and hyphens. Not \"login\", \"admin\" or anything starting with \"wp-\"."
+msgstr "Co najmniej 6 znaków: litery, cyfry i myślniki. Nie „login”, „admin” ani nic, co zaczyna się od „wp-”."
+
+#: includes/class-admin.php:389
+msgid "Typical WordPress addresses answer like any address that does not exist: the same 404 page, so a probe cannot tell \"blocked\" from \"missing\"."
+msgstr "Typowe adresy WordPressa odpowiadają jak każdy nieistniejący adres: tą samą stroną 404, więc sonda nie odróżni „zablokowane” od „nie ma”."
+
+#: includes/class-admin.php:391
+msgid "REST API only for signed-in users"
+msgstr "REST API tylko dla zalogowanych"
+
+#: includes/class-admin.php:391
+msgid "Visitors get the 404 page for the REST API, except for the routes allowed below. The editor, the admin area and application passwords keep working."
+msgstr "Goście dostają stronę 404 zamiast REST API, z wyjątkiem tras dozwolonych poniżej. Edytor, panel i hasła aplikacji działają dalej."
+
+#: includes/class-admin.php:394
+msgid "Allowed for visitors"
+msgstr "Dozwolone dla gości"
+
+#: includes/class-admin.php:396
+msgid "One route prefix per line, e.g. contact-form-7 or wc/store. Contact forms and shops that send forms through the REST API need theirs here."
+msgstr "Jeden początek trasy w wierszu, np. contact-form-7 albo wc/store. Formularze kontaktowe i sklepy, które wysyłają dane przez REST API, muszą tu mieć swój wpis."
+
+#: includes/class-admin.php:398
+msgid "Namespaces on this site:"
+msgstr "Przestrzenie nazw na tej stronie:"
+
+#: includes/class-admin.php:402
+msgid "<code>xmlrpc.php</code> (GET and POST) is the 404 page; pingbacks are off."
+msgstr "<code>xmlrpc.php</code> (GET i POST) daje stronę 404; pingbacki są wyłączone."
+
+#: includes/class-admin.php:403
+msgid "Core files"
+msgstr "Pliki rdzenia"
+
+#: includes/class-admin.php:403
+msgid "<code>readme.html</code>, <code>license.txt</code>, <code>wp-config-sample.php</code>, <code>wp-load.php</code>, <code>wp-signup.php</code>, <code>wp-activate.php</code>, <code>wp-trackback.php</code>, <code>wp-links-opml.php</code>, <code>wp-mail.php</code> and trackback addresses."
+msgstr "<code>readme.html</code>, <code>license.txt</code>, <code>wp-config-sample.php</code>, <code>wp-load.php</code>, <code>wp-signup.php</code>, <code>wp-activate.php</code>, <code>wp-trackback.php</code>, <code>wp-links-opml.php</code>, <code>wp-mail.php</code> i adresy trackbacków."
+
+#: includes/class-admin.php:404
+msgid "Authors"
+msgstr "Autorzy"
+
+#: includes/class-admin.php:404
+msgid "<code>?author=1</code>, author archives, the users sitemap and REST endpoint (they reveal login names)."
+msgstr "<code>?author=1</code>, archiwa autorów, mapa strony i punkt REST użytkowników (zdradzają loginy)."
+
+#: includes/class-admin.php:405
+msgid "RSS feeds"
+msgstr "Kanały RSS"
+
+#: includes/class-admin.php:405
+msgid "All feeds become the 404 page and their links disappear. Leave off if people or services read the feed."
+msgstr "Wszystkie kanały dają stronę 404, a linki do nich znikają. Zostaw wyłączone, jeśli ktoś lub jakaś usługa czyta kanał."
+
+#: includes/class-admin.php:406
+msgid "wp-cron.php"
+msgstr "wp-cron.php"
+
+#: includes/class-admin.php:406
+msgid "Called directly it is the 404 page; WordPress' own calls carry a secret key and work."
+msgstr "Wywołany bezpośrednio daje stronę 404; własne wywołania WordPressa mają tajny klucz i działają."
+
+#: includes/class-admin.php:407
+msgid "For a server cron job use this address:"
+msgstr "Dla zadania cron na serwerze użyj tego adresu:"
+
+#: includes/class-admin.php:408
+msgid "/login, /admin, /dashboard"
+msgstr "/login, /admin, /dashboard"
+
+#: includes/class-admin.php:408
+msgid "No redirect to the login form from these short addresses."
+msgstr "Bez przekierowania z tych krótkich adresów na formularz logowania."
+
+#: includes/class-admin.php:409
+msgid "Sitemap without \"wp-\""
+msgstr "Mapa strony bez „wp-”"
+
+#: includes/class-admin.php:409
+msgid "WordPress' own sitemap at <code>/sitemap.xml</code> instead of <code>/wp-sitemap.xml</code>, without its stylesheet. Has no effect when an SEO plugin provides the sitemap. Submit the new address in Search Console."
+msgstr "Wbudowana mapa strony WordPressa pod <code>/sitemap.xml</code> zamiast <code>/wp-sitemap.xml</code>, bez arkusza stylów. Nie działa, gdy mapę dostarcza wtyczka SEO. Nowy adres zgłoś w Search Console."
+
+#. translators: %s: main address
+#: includes/class-admin.php:424
+#, php-format
+msgid "All addresses of the site in one 301 step to the main address <code>%s</code>: path and query string kept, /.well-known/ left alone (certificates), https behind a proxy or Cloudflare recognised. Only this host name and its www variant are affected, so a local copy keeps working."
+msgstr "Wszystkie adresy strony jednym krokiem 301 na adres główny <code>%s</code>: ścieżka i parametry zostają, /.well-known/ bez zmian (certyfikaty), https za proxy i Cloudflare jest rozpoznawane. Dotyczy tylko tej nazwy domeny i jej wariantu z www, więc kopia lokalna działa dalej."
+
+#: includes/class-admin.php:426
+msgid "The site address (Settings → General) starts with http://. Change it to https:// first (with a working certificate); until then the https redirect stays off."
+msgstr "Adres witryny (Ustawienia → Ogólne) zaczyna się od http://. Najpierw zmień go na https:// (przy działającym certyfikacie); do tego czasu przekierowanie na https pozostaje wyłączone."
+
+#: includes/class-admin.php:429
+msgid "http → https"
+msgstr "http → https"
+
+#: includes/class-admin.php:429
+msgid "Every http:// address goes to https://."
+msgstr "Każdy adres http:// przechodzi na https://."
+
+#. translators: 1: other host variant, 2: main host
+#: includes/class-admin.php:431
+msgid "One host name"
+msgstr "Jedna nazwa domeny"
+
+#. translators: 1: other host variant, 2: main host
+#: includes/class-admin.php:431
+#, php-format
+msgid "<code>%1$s</code> goes to <code>%2$s</code> (the host of the site address decides whether it is with or without www)."
+msgstr "<code>%1$s</code> przechodzi na <code>%2$s</code> (o tym, czy z www, czy bez, decyduje domena w adresie witryny)."
+
+#: includes/class-admin.php:434
+msgid "Test from a terminal"
+msgstr "Test z terminala"
+
+#: includes/class-admin.php:441
+msgid "Expected: 301 with location https://… for the first two (in one step), 200 for the last."
+msgstr "Oczekiwane: 301 z location https://… dla dwóch pierwszych (w jednym kroku), 200 dla ostatniego."
+
+#: includes/class-admin.php:448
+msgid "The plugin asks the site for its pages and the typical WordPress addresses the way a stranger would: without cookies, from the server itself. It then lists what still gives WordPress away."
+msgstr "Wtyczka pyta stronę o jej podstrony i typowe adresy WordPressa tak, jak zrobiłby to obcy: bez ciasteczek, z samego serwera. Potem wypisuje, co jeszcze zdradza WordPressa."
+
+#: includes/class-admin.php:450
+msgid "Run the check"
+msgstr "Uruchom sprawdzanie"
+
+#: includes/class-admin.php:457
+msgid "hidden (normal 404 page)"
+msgstr "ukryte (zwykła strona 404)"
+
+#: includes/class-admin.php:458
+msgid "works"
+msgstr "działa"
+
+#: includes/class-admin.php:459
+msgid "allowed by the settings"
+msgstr "dozwolone w ustawieniach"
+
+#: includes/class-admin.php:460
+msgid "blocked, but not like the 404 page"
+msgstr "zablokowane, ale inaczej niż strona 404"
+
+#: includes/class-admin.php:461
+msgid "answers like WordPress"
+msgstr "odpowiada jak WordPress"
+
+#: includes/class-admin.php:462
+msgid "does not work"
+msgstr "nie działa"
+
+#. translators: 1: HTTP status, 2: size in bytes
+#: includes/class-admin.php:466
+#, php-format
+msgid "Reference: the 404 page of a random address answers %1$d with %2$d bytes."
+msgstr "Wzorzec: strona 404 losowego adresu odpowiada kodem %1$d i ma %2$d bajtów."
+
+#: includes/class-admin.php:467
+msgid "Typical addresses"
+msgstr "Typowe adresy"
+
+#: includes/class-admin.php:468
+msgid "Status"
+msgstr "Kod"
+
+#: includes/class-admin.php:468
+msgid "Redirect to"
+msgstr "Przekierowanie na"
+
+#: includes/class-admin.php:468
+msgid "Result"
+msgstr "Wynik"
+
+#: includes/class-admin.php:483
+msgid "Traces in pages and headers"
+msgstr "Ślady w stronach i nagłówkach"
+
+#: includes/class-admin.php:485
+msgid "Headers of the home page:"
+msgstr "Nagłówki strony głównej:"
+
+#: includes/class-admin.php:487
+msgid "Page"
+msgstr "Strona"
+
+#: includes/class-admin.php:487
+msgid "Found"
+msgstr "Znalezione"
+
+#: includes/class-admin.php:491
+msgid "nothing found"
+msgstr "nic nie znaleziono"
+
+#: includes/class-admin.php:504
+msgid "Words in your own content (a post about WordPress) and theme credits are found too; the theme's footer text is edited in the theme or the Site Editor. Block class names (wp-block-…) and the theme stylesheet header stay, as styles depend on them."
+msgstr "Znajdowane są też słowa z Twoich treści (np. wpis o WordPressie) i podpisy motywu; tekst stopki motywu zmienia się w motywie albo w edytorze witryny. Nazwy klas bloków (wp-block-…) i nagłówek arkusza stylów motywu zostają, bo zależą od nich style."
+
+#: includes/class-admin.php:513
+msgid "Emergency: switch everything off"
+msgstr "Awaryjnie: wyłącz wszystko"
+
+#: includes/class-admin.php:514
+msgid "If the site or the admin area stops working, use any one of these:"
+msgstr "Jeśli strona albo panel przestaną działać, wystarczy jeden z tych sposobów:"
+
+#: includes/class-admin.php:516
+msgid "Add <code>define( 'MG_STEALTH_DISABLE', true );</code> to wp-config.php and open any page of the site: every rule stops, the .htaccess block is removed, wp-login.php works again. Delete the line to switch the plugin on again."
+msgstr "Dopisz <code>define( 'MG_STEALTH_DISABLE', true );</code> do wp-config.php i otwórz dowolną stronę witryny: wszystkie reguły przestają działać, blok w .htaccess znika, wp-login.php znowu działa. Usuń tę linię, aby włączyć wtyczkę ponownie."
+
+#: includes/class-admin.php:517
+msgid "Rename the folder <code>wp-content/plugins/mg-stealth</code> (FTP, file manager). The .htaccess rules check that the plugin file exists, so they stop at once."
+msgstr "Zmień nazwę katalogu <code>wp-content/plugins/mg-stealth</code> (FTP, menedżer plików). Reguły w .htaccess sprawdzają, czy plik wtyczki istnieje, więc od razu przestają działać."
+
+#: includes/class-admin.php:518
+msgid "WP-CLI: <code>wp mg-stealth remove-rules</code>, <code>wp mg-stealth login-url</code>, <code>wp plugin deactivate mg-stealth</code>."
+msgstr "WP-CLI: <code>wp mg-stealth remove-rules</code>, <code>wp mg-stealth login-url</code>, <code>wp plugin deactivate mg-stealth</code>."
+
+#. translators: %s: path of the .htaccess file
+#: includes/class-admin.php:520
+#, php-format
+msgid "Delete the lines from <code># BEGIN MG Stealth</code> to <code># END MG Stealth</code> in <code>%s</code>."
+msgstr "Usuń linie od <code># BEGIN MG Stealth</code> do <code># END MG Stealth</code> w pliku <code>%s</code>."
+
+#: includes/class-admin.php:522
+msgid "Deactivation and removal"
+msgstr "Wyłączenie i usunięcie"
+
+#: includes/class-admin.php:523
+msgid "Deactivating removes the .htaccess block and WordPress' rewrite rules are rebuilt: the site is back to its defaults (wp-login.php, /wp-json/, /wp-content/ …). The settings stay for a later activation; deleting the plugin removes them too."
+msgstr "Wyłączenie usuwa blok z .htaccess, a WordPress odbudowuje swoje reguły adresów: strona wraca do ustawień domyślnych (wp-login.php, /wp-json/, /wp-content/ …). Ustawienia zostają na później; usunięcie wtyczki kasuje także je."
+
+#: includes/class-admin.php:524
+msgid "What cannot be hidden"
+msgstr "Czego nie da się ukryć"
+
+#: includes/class-admin.php:526
+msgid "Block class names (wp-block-…, wp-container-…) and the CSS custom properties of block themes (--wp--preset--…): styles depend on them."
+msgstr "Nazwy klas bloków (wp-block-…, wp-container-…) i zmienne CSS motywów blokowych (--wp--preset--…): zależą od nich style."
+
+#: includes/class-admin.php:527
+msgid "The header comment of the theme's style.css when the theme loads that file, and @wordpress/… names in the import map of blocks that use the Interactivity API."
+msgstr "Komentarz nagłówkowy w style.css motywu, jeśli motyw wczytuje ten plik, oraz nazwy @wordpress/… w mapie importów bloków korzystających z Interactivity API."
+
+#: includes/class-admin.php:528
+msgid "Cookies after signing in (wordpress_logged_in_…), and the login page itself at its private address."
+msgstr "Ciasteczka po zalogowaniu (wordpress_logged_in_…) i sama strona logowania pod prywatnym adresem."
+
+#: includes/class-admin.php:529
+msgid "Behaviour that a careful tool can still recognise (for example /page/2/ archives). The plugin makes the usual checks find nothing; it cannot promise that no tool ever can."
+msgstr "Zachowanie, które dokładne narzędzie może rozpoznać (np. archiwa /page/2/). Wtyczka sprawia, że typowe sprawdzenia nic nie znajdują; nie może obiecać, że żadne narzędzie nigdy niczego nie wykryje."
+
+#: includes/class-admin.php:531
+msgid "Servers"
+msgstr "Serwery"
+
+#: includes/class-admin.php:532
+msgid "Apache and LiteSpeed read the .htaccess block. On nginx the PHP part still works (head and headers, REST API, login, authors, XML-RPC, cron, redirects); the neutral paths and the blocking of static files such as readme.html need server rules or the real move from the Paths tab."
+msgstr "Apache i LiteSpeed czytają blok w .htaccess. Na nginx działa część w PHP (head i nagłówki, REST API, logowanie, autorzy, XML-RPC, cron, przekierowania); neutralne ścieżki i blokada plików statycznych, np. readme.html, wymagają reguł serwera albo prawdziwego przeniesienia z zakładki Ścieżki."
+
+#: includes/class-admin.php:533
+msgid "Privacy"
+msgstr "Prywatność"
+
+#: includes/class-admin.php:534
+msgid "The plugin sends no data anywhere and prints no credit link. The self-check only asks this site itself. The GitLab build looks for new versions at the GitLab project of the plugin; the WordPress.org build does not."
+msgstr "Wtyczka nigdzie nie wysyła danych i nie wstawia linku do autora. Sprawdzanie pyta wyłącznie tę stronę. Wersja z GitLaba sprawdza nowe wydania w projekcie wtyczki na GitLabie; wersja z WordPress.org tego nie robi."
+
+#: includes/class-paths.php:245
+msgid "Back up the files and the database first. Run in the WordPress folder:"
+msgstr "Najpierw zrób kopię plików i bazy danych. Uruchom w katalogu WordPressa:"
+
+#: includes/class-request.php:143
+msgid "The page you are looking for does not exist."
+msgstr "Strona, której szukasz, nie istnieje."
+
+#: includes/class-self-check.php:178
+msgid "Home page"
+msgstr "Strona główna"
+
+#: includes/class-self-check.php:183
+msgid "Newest post"
+msgstr "Najnowszy wpis"
+
+#: includes/class-self-check.php:184
+msgid "Newest page"
+msgstr "Najnowsza strona"
+
+#: includes/class-self-check.php:204
+msgid "404 page"
+msgstr "Strona 404"
+
+#: includes/class-self-check.php:213
+msgid "RSS feed"
+msgstr "Kanał RSS"
+
+#: includes/class-self-check.php:219
+msgid "Sitemap"
+msgstr "Mapa strony"
+
+#: includes/class-server-rules.php:232
+msgid "This server does not read .htaccess files (for example nginx). Rules that need the server are not active."
+msgstr "Ten serwer nie czyta plików .htaccess (np. nginx). Reguły wymagające serwera nie działają."
+
+#: includes/class-server-rules.php:260
+msgid "The neutral paths do not answer on this server, so they were left out of the rules and the original paths stay in use. See the help tab."
+msgstr "Neutralne ścieżki nie odpowiadają na tym serwerze, więc zostały pominięte w regułach i nadal używane są oryginalne ścieżki. Zobacz zakładkę Pomoc."
+
+#: includes/class-server-rules.php:312
+msgid "The .htaccess file is not writable. Copy the rules below into it by hand, at the very top."
+msgstr "Plik .htaccess nie jest zapisywalny. Skopiuj do niego ręcznie reguły poniżej, na samą górę."
+
+#: includes/class-server-rules.php:319
+msgid "After writing the rules the site stopped answering (server error), so the previous .htaccess was restored. The server probably does not allow some directives; see the help tab."
+msgstr "Po zapisaniu reguł strona przestała odpowiadać (błąd serwera), więc przywrócono poprzedni .htaccess. Serwer zapewne nie pozwala na niektóre dyrektywy; zobacz zakładkę Pomoc."
+
+#: includes/class-settings.php:309
+msgid "Every neutral path needs a name."
+msgstr "Każda neutralna ścieżka musi mieć nazwę."
+
+#. translators: %s: path name
+#: includes/class-settings.php:314
+#, php-format
+msgid "\"%s\" still sounds like WordPress; choose a neutral name."
+msgstr "„%s” nadal kojarzy się z WordPressem; wybierz neutralną nazwę."
+
+#. translators: %s: path name
+#: includes/class-settings.php:319
+#, php-format
+msgid "The name \"%s\" is used twice."
+msgstr "Nazwa „%s” jest użyta dwa razy."
+
+#. translators: %s: path name
+#: includes/class-settings.php:324
+#, php-format
+msgid "A real folder \"%s\" already exists in the site root; choose another name."
+msgstr "W katalogu głównym strony istnieje już katalog „%s”; wybierz inną nazwę."
+
+#: includes/class-settings.php:332
+msgid "The addresses for AJAX, comments and the REST API must be a single word."
+msgstr "Adresy AJAX, komentarzy i REST API muszą być jednym słowem."
