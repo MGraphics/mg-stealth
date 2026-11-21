@@ -1,7 +1,7 @@
 .git
 .gitignore
 .gitattributes
-.gitlab-ci.yml
+.github
 .distignore
 .claude
 .local

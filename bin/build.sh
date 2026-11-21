@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Builds the release packages into build/:
-#   mg-stealth-<version>.zip         GitLab release (with the update checker, Update URI header)
+#   mg-stealth-<version>.zip         GitHub release (with the update checker, Update URI header)
 #   mg-stealth-<version>-wporg.zip   WordPress.org (no update checker, no Update URI)
 # Both unpack to a folder named mg-stealth/.
 set -euo pipefail
@@ -14,22 +14,22 @@ if [ "$VERSION" != "$STABLE" ] || [ "$VERSION" != "$CONST" ]; then
 fi
 OUT="$ROOT/build"
 rm -rf "$OUT"
-mkdir -p "$OUT/gitlab" "$OUT/wporg"
+mkdir -p "$OUT/github" "$OUT/wporg"
 
-rsync -a --exclude-from="$ROOT/.distignore" "$ROOT/" "$OUT/gitlab/mg-stealth/"
-rsync -a "$OUT/gitlab/mg-stealth/" "$OUT/wporg/mg-stealth/"
+rsync -a --exclude-from="$ROOT/.distignore" "$ROOT/" "$OUT/github/mg-stealth/"
+rsync -a "$OUT/github/mg-stealth/" "$OUT/wporg/mg-stealth/"
 
 # WordPress.org: updates come from WordPress.org itself.
 WP="$OUT/wporg/mg-stealth"
 rm -rf "$WP/lib" "$WP/includes/class-updater.php"
-sed -i.bak -e '/^ \* Update URI:/d' -e '/gitlab-build:start/,/gitlab-build:end/d' "$WP/mg-stealth.php"
+sed -i.bak -e '/^ \* Update URI:/d' -e '/github-build:start/,/github-build:end/d' "$WP/mg-stealth.php"
 rm -f "$WP/mg-stealth.php.bak"
-if grep -R -n -i -E 'update uri|plugin-update-checker|PucFactory|gitlab-build' "$WP" --include='*.php'; then
+if grep -R -n -i -E 'update uri|plugin-update-checker|PucFactory|github-build' "$WP" --include='*.php'; then
 	echo "The WordPress.org build still contains update-checker code." >&2
 	exit 1
 fi
 
-( cd "$OUT/gitlab" && zip -qr "../mg-stealth-$VERSION.zip" mg-stealth )
+( cd "$OUT/github" && zip -qr "../mg-stealth-$VERSION.zip" mg-stealth )
 ( cd "$OUT/wporg" && zip -qr "../mg-stealth-$VERSION-wporg.zip" mg-stealth )
 echo "$OUT/mg-stealth-$VERSION.zip"
 echo "$OUT/mg-stealth-$VERSION-wporg.zip"

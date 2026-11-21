@@ -10,7 +10,7 @@ Polski opis, FAQ i lista zmian: [readme.txt](readme.txt). The plugin is fully tr
 
 ## Install
 
-Download `mg-stealth-<version>.zip` from the latest [release](../../releases) and upload it in **Plugins → Add New → Upload Plugin**. Later versions show up as normal WordPress updates (see *Updates* below).
+Download `mg-stealth-<version>.zip` from the [latest release](https://github.com/MGraphics/mg-stealth/releases/latest) (the release asset, not GitHub's *Source code* archive) and upload it in **Plugins → Add New → Upload Plugin**. Later versions show up as normal WordPress updates (see *Updates* below).
 
 ## Features
 
@@ -31,19 +31,19 @@ Everything is undone on deactivation (the `.htaccess` block is removed and WordP
 - rename `wp-content/plugins/mg-stealth` → the `.htaccess` rules stop immediately (each one checks that the plugin file exists);
 - WP-CLI: `wp mg-stealth status | sync | rules | remove-rules | login-url | check`.
 
-## Updates (GitLab Releases)
+## Updates (GitHub Releases)
 
-The GitLab build bundles [plugin-update-checker](https://github.com/YahnisElsts/plugin-update-checker) (MIT) and asks this project's Releases for new versions. It installs the release asset named `mg-stealth-<version>.zip`. The project address is the constant `MG_STEALTH_UPDATE_REPOSITORY` in `mg-stealth.php` (placeholder `https://gitlab.com/mgraphics/mg-stealth/`; it can also be defined in `wp-config.php`). `MG_STEALTH_DISABLE_UPDATES` switches the checks off. The WordPress.org build has neither the library nor the `Update URI` header.
+The GitHub build bundles [plugin-update-checker](https://github.com/YahnisElsts/plugin-update-checker) (MIT) and asks the Releases of the public repository [MGraphics/mg-stealth](https://github.com/MGraphics/mg-stealth) for new versions, without a token. It installs only the release asset named `mg-stealth-<version>.zip`; a release without that asset is ignored. The repository address is the constant `MG_STEALTH_UPDATE_REPOSITORY` in `mg-stealth.php` (`https://github.com/MGraphics/mg-stealth/`; it can also be defined in `wp-config.php`). `MG_STEALTH_DISABLE_UPDATES` switches the checks off. The WordPress.org build has neither the library nor the `Update URI` header.
 
 ### Releasing a version
 
 1. Bump the version in three places: the `Version:` header and `MG_STEALTH_VERSION` in `mg-stealth.php`, and `Stable tag:` in `readme.txt`; add a changelog entry to `readme.txt`.
 2. `bin/i18n.sh` when strings changed; `vendor/bin/phpunit`.
 3. Commit, tag `v<version>` and push the tag: `git tag v1.0.1 && git push origin main v1.0.1`.
-4. The tag pipeline (`.gitlab-ci.yml`) runs the tests, builds both packages with `bin/build.sh`, uploads them to the project's Generic Package Registry and creates the GitLab Release `v<version>` with `mg-stealth-<version>.zip` as a release asset.
+4. The tag workflow (`.github/workflows/release.yml`) runs the tests, builds both packages with `bin/build.sh` and creates the GitHub Release `v<version>` with `mg-stealth-<version>.zip` and `mg-stealth-<version>-wporg.zip` as release assets. By hand instead: `bin/build.sh && gh release create v1.0.1 build/mg-stealth-1.0.1.zip build/mg-stealth-1.0.1-wporg.zip`.
 5. Sites with the plugin see the update within 12 hours (or at once via **Dashboard → Updates → Check again**).
 
-The project must be **public**, otherwise sites cannot read the releases without a token.
+The repository must stay **public**, otherwise sites cannot read the releases without a token.
 
 ## Development
 

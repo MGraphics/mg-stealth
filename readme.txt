@@ -97,7 +97,7 @@ No. Block class names (`wp-block-…`), the CSS variables of block themes, the h
 
 = Does the plugin send data anywhere? =
 
-No. The check only asks your own site. The build distributed on GitLab looks for new versions in the plugin's GitLab project; the WordPress.org build has no update code of its own.
+No. The check only asks your own site. The build distributed on GitHub looks for new versions in the plugin's GitHub repository; the WordPress.org build has no update code of its own.
 
 == Screenshots ==
 
@@ -109,6 +109,7 @@ No. The check only asks your own site. The build distributed on GitLab looks for
 == Changelog ==
 
 = 1.0.0 =
+* Updates are delivered through the GitHub Releases of https://github.com/MGraphics/mg-stealth (release asset mg-stealth-<version>.zip).
 * First release: clean page source and headers, neutral paths with a managed .htaccess block, private login, REST API allow-list, 404 for typical WordPress addresses, neutral sitemap, one-hop https/www redirects, self-check, emergency switch, Polish translation.
 
 == Upgrade Notice ==

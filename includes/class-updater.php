@@ -1,6 +1,6 @@
 <?php
 /**
- * Updates from the Releases of the public GitLab project (plugin-update-checker, MIT).
+ * Updates from the Releases of the public GitHub repository (plugin-update-checker, MIT).
  * The build for WordPress.org leaves the library out, and then nothing here runs.
  *
  * @package MG_Stealth
@@ -34,8 +34,9 @@ final class Updater {
 		);
 		$api     = $checker->getVcsApi();
 		if ( $api && method_exists( $api, 'enableReleaseAssets' ) ) {
-			// The release package built by CI (mg-stealth-1.2.3.zip), not GitLab's source archive.
-			$api->enableReleaseAssets( '/mg-stealth-[0-9][0-9.]*\.zip($|[?&#])/i' );
+			// Only the release asset mg-stealth-1.2.3.zip (not -wporg.zip, never GitHub's source
+			// archive): 2 = Api::REQUIRE_RELEASE_ASSETS, a release without that asset is skipped.
+			$api->enableReleaseAssets( '/^mg-stealth-[0-9][0-9.]*\.zip$/i', 2 );
 		}
 	}
 }

@@ -1,0 +1,45 @@
+# MG Stealth: tests on every push; a tag v<version> builds the packages and creates the GitHub Release
+# whose asset mg-stealth-<version>.zip the plugin's update checker installs.
+name: release
+
+on:
+  push:
+    branches: [main]
+    tags: ['v[0-9]+.[0-9]+.[0-9]+']
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          tools: composer:v2
+      - run: composer install --no-interaction --no-progress
+      - run: vendor/bin/phpunit
+      - run: find . -path ./vendor -prune -o -path ./lib -prune -o -name '*.php' -print0 | xargs -0 -n1 php -l > /dev/null
+
+  release:
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: test
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build and release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          VERSION="${GITHUB_REF_NAME#v}"
+          bin/build.sh
+          test -f "build/mg-stealth-${VERSION}.zip"
+          gh release create "$GITHUB_REF_NAME" \
+            "build/mg-stealth-${VERSION}.zip" "build/mg-stealth-${VERSION}-wporg.zip" \
+            --title "MG Stealth ${VERSION}" \
+            --notes "MG Stealth ${VERSION}. Changelog: readme.txt. Install or update with mg-stealth-${VERSION}.zip; the -wporg package is the WordPress.org build without the update checker."

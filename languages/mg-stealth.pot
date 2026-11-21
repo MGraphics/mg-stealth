@@ -3,7 +3,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: MG Stealth 1.0.0\n"
-"Report-Msgid-Bugs-To: https://gitlab.com/mgraphics/mg-stealth/-/issues\n"
+"Report-Msgid-Bugs-To: https://github.com/MGraphics/mg-stealth/issues\n"
 "Last-Translator: MGraphics\n"
 "Language-Team: MGraphics\n"
 "MIME-Version: 1.0\n"
@@ -624,7 +624,7 @@ msgid "Privacy"
 msgstr ""
 
 #: includes/class-admin.php:534
-msgid "The plugin sends no data anywhere and prints no credit link. The self-check only asks this site itself. The GitLab build looks for new versions at the GitLab project of the plugin; the WordPress.org build does not."
+msgid "The plugin sends no data anywhere and prints no credit link. The self-check only asks this site itself. The GitHub build looks for new versions in the GitHub repository of the plugin; the WordPress.org build does not."
 msgstr ""
 
 #: includes/class-paths.php:245

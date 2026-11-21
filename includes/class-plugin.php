@@ -84,7 +84,7 @@ final class Plugin {
 			( new Admin() )->register();
 		}
 		if ( class_exists( __NAMESPACE__ . '\\Updater' ) ) {
-			( new Updater() )->register(); // Only in the GitLab build.
+			( new Updater() )->register(); // Only in the GitHub build.
 		}
 
 		if ( defined( 'WP_CLI' ) && WP_CLI ) {
@@ -136,7 +136,7 @@ final class Plugin {
 	}
 
 	/**
-	 * Translations (the GitLab build is not served by translate.wordpress.org).
+	 * Translations (the GitHub build is not served by translate.wordpress.org).
 	 */
 	public function load_textdomain(): void {
 		load_plugin_textdomain( 'mg-stealth', false, dirname( MG_STEALTH_BASENAME ) . '/languages' ); // phpcs:ignore PluginCheck.CodeAnalysis.DiscouragedFunctions.load_plugin_textdomainFound -- Needed outside WordPress.org.

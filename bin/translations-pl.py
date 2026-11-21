@@ -208,8 +208,8 @@ PL = {
     "Apache and LiteSpeed read the .htaccess block. On nginx the PHP part still works (head and headers, REST API, login, authors, XML-RPC, cron, redirects); the neutral paths and the blocking of static files such as readme.html need server rules or the real move from the Paths tab.":
         "Apache i LiteSpeed czytają blok w .htaccess. Na nginx działa część w PHP (head i nagłówki, REST API, logowanie, autorzy, XML-RPC, cron, przekierowania); neutralne ścieżki i blokada plików statycznych, np. readme.html, wymagają reguł serwera albo prawdziwego przeniesienia z zakładki Ścieżki.",
     "Privacy": "Prywatność",
-    "The plugin sends no data anywhere and prints no credit link. The self-check only asks this site itself. The GitLab build looks for new versions at the GitLab project of the plugin; the WordPress.org build does not.":
-        "Wtyczka nigdzie nie wysyła danych i nie wstawia linku do autora. Sprawdzanie pyta wyłącznie tę stronę. Wersja z GitLaba sprawdza nowe wydania w projekcie wtyczki na GitLabie; wersja z WordPress.org tego nie robi.",
+    "The plugin sends no data anywhere and prints no credit link. The self-check only asks this site itself. The GitHub build looks for new versions in the GitHub repository of the plugin; the WordPress.org build does not.":
+        "Wtyczka nigdzie nie wysyła danych i nie wstawia linku do autora. Sprawdzanie pyta wyłącznie tę stronę. Wersja z GitHuba sprawdza nowe wydania w repozytorium wtyczki na GitHubie; wersja z WordPress.org tego nie robi.",
     "Back up the files and the database first. Run in the WordPress folder:": "Najpierw zrób kopię plików i bazy danych. Uruchom w katalogu WordPressa:",
     "The page you are looking for does not exist.": "Strona, której szukasz, nie istnieje.",
     "Home page": "Strona główna",
@@ -247,7 +247,7 @@ def main() -> int:
         'msgid ""',
         'msgstr ""',
         '"Project-Id-Version: MG Stealth 1.0.0\\n"',
-        '"Report-Msgid-Bugs-To: https://gitlab.com/mgraphics/mg-stealth/-/issues\\n"',
+        '"Report-Msgid-Bugs-To: https://github.com/MGraphics/mg-stealth/issues\\n"',
         '"Last-Translator: MGraphics\\n"',
         '"Language-Team: MGraphics\\n"',
         '"PO-Revision-Date: 2026-11-21 21:00+0100\\n"',

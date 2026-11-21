@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name:       MG Stealth
- * Plugin URI:        https://mgraphics.com.pl/mg-stealth/
+ * Plugin URI:        https://github.com/MGraphics/mg-stealth
  * Description:       Makes it hard to tell that a site runs WordPress: clean page source and headers, neutral public paths, a private login address, closed REST API for guests, the normal 404 page for typical WordPress addresses and one-hop 301 redirects to https and the main host name.
  * Version:           1.0.0
  * Requires at least: 6.4
@@ -12,7 +12,7 @@
  * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain:       mg-stealth
  * Domain Path:       /languages
- * Update URI:        https://gitlab.com/mgraphics/mg-stealth
+ * Update URI:        https://github.com/MGraphics/mg-stealth
  *
  * @package MG_Stealth
  */
@@ -24,16 +24,16 @@ define( 'MG_STEALTH_FILE', __FILE__ );
 define( 'MG_STEALTH_DIR', plugin_dir_path( __FILE__ ) );
 define( 'MG_STEALTH_BASENAME', plugin_basename( __FILE__ ) );
 
-// gitlab-build:start (removed from the WordPress.org build by bin/build.sh)
+// github-build:start (removed from the WordPress.org build by bin/build.sh)
 /*
- * Public GitLab project whose Releases deliver updates of this plugin. Can be overridden in
+ * Public GitHub repository whose Releases deliver updates of this plugin. Can be overridden in
  * wp-config.php; define MG_STEALTH_DISABLE_UPDATES to switch update checks off.
  */
 if ( ! defined( 'MG_STEALTH_UPDATE_REPOSITORY' ) ) {
-	define( 'MG_STEALTH_UPDATE_REPOSITORY', 'https://gitlab.com/mgraphics/mg-stealth/' );
+	define( 'MG_STEALTH_UPDATE_REPOSITORY', 'https://github.com/MGraphics/mg-stealth/' );
 }
 require_once MG_STEALTH_DIR . 'includes/class-updater.php';
-// gitlab-build:end
+// github-build:end
 
 require_once MG_STEALTH_DIR . 'includes/class-output-filter.php';
 require_once MG_STEALTH_DIR . 'includes/class-htaccess.php';

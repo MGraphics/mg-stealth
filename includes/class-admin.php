@@ -531,7 +531,7 @@ final class Admin {
 		<h2><?php esc_html_e( 'Servers', 'mg-stealth' ); ?></h2>
 		<p><?php esc_html_e( 'Apache and LiteSpeed read the .htaccess block. On nginx the PHP part still works (head and headers, REST API, login, authors, XML-RPC, cron, redirects); the neutral paths and the blocking of static files such as readme.html need server rules or the real move from the Paths tab.', 'mg-stealth' ); ?></p>
 		<h2><?php esc_html_e( 'Privacy', 'mg-stealth' ); ?></h2>
-		<p><?php esc_html_e( 'The plugin sends no data anywhere and prints no credit link. The self-check only asks this site itself. The GitLab build looks for new versions at the GitLab project of the plugin; the WordPress.org build does not.', 'mg-stealth' ); ?></p>
+		<p><?php esc_html_e( 'The plugin sends no data anywhere and prints no credit link. The self-check only asks this site itself. The GitHub build looks for new versions in the GitHub repository of the plugin; the WordPress.org build does not.', 'mg-stealth' ); ?></p>
 		<?php
 	}
 }
