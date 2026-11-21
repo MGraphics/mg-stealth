@@ -24,6 +24,8 @@ final class Admin {
 		add_action( 'admin_init', array( $this, 'register_setting' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'assets' ) );
 		add_action( 'admin_post_mg_stealth_recheck', array( $this, 'handle_recheck' ) );
+		add_action( 'admin_post_mg_stealth_unlock', array( $this, 'handle_unlock' ) );
+		add_action( 'admin_post_mg_stealth_llar_import', array( $this, 'handle_llar_import' ) );
 		add_action( 'admin_notices', array( $this, 'notices' ) );
 		add_filter( 'plugin_action_links_' . MG_STEALTH_BASENAME, array( $this, 'action_links' ) );
 	}
@@ -103,6 +105,44 @@ final class Admin {
 	}
 
 	/**
+	 * Lockout tab: lifts one or every lockout, or empties the log.
+	 */
+	public function handle_unlock(): void {
+		if ( ! current_user_can( 'manage_options' ) ) {
+			wp_die( esc_html__( 'You are not allowed to do this.', 'mg-stealth' ), '', array( 'response' => 403 ) );
+		}
+		check_admin_referer( 'mg_stealth_unlock' );
+		$what = isset( $_POST['what'] ) ? sanitize_text_field( wp_unslash( $_POST['what'] ) ) : '';
+		if ( 'all' === $what ) {
+			Lockout::unlock_all();
+		} elseif ( 'log' === $what ) {
+			Lockout::clear_log();
+		} elseif ( preg_match( '~^(ip|user):[a-f0-9]{32}$~', $what ) ) {
+			Lockout::unlock( array( $what ) );
+		}
+		wp_safe_redirect( self::url( 'lockout', array( 'unlocked' => 1 ) ) );
+		exit;
+	}
+
+	/**
+	 * Lockout tab: takes over the settings of Limit Login Attempts Reloaded.
+	 */
+	public function handle_llar_import(): void {
+		if ( ! current_user_can( 'manage_options' ) ) {
+			wp_die( esc_html__( 'You are not allowed to do this.', 'mg-stealth' ), '', array( 'response' => 403 ) );
+		}
+		check_admin_referer( 'mg_stealth_llar_import' );
+		$import = Lockout::llar_settings();
+		if ( ! empty( $import ) ) {
+			$import['lockout_enabled'] = true;
+			update_option( Settings::OPTION, array_merge( Settings::all(), $import ) );
+			Settings::flush_cache();
+		}
+		wp_safe_redirect( self::url( 'lockout', array( 'imported' => empty( $import ) ? 0 : 1 ) ) );
+		exit;
+	}
+
+	/**
 	 * Notices on every admin screen (emergency mode, conflicting plugin) and on this screen.
 	 */
 	public function notices(): void {
@@ -115,6 +155,9 @@ final class Admin {
 		}
 		if ( Login::enabled() && ( defined( 'WPS_HIDE_LOGIN_BASENAME' ) || class_exists( '\WPS\WPS_Hide_Login\Plugin' ) ) ) {
 			echo '<div class="notice notice-error"><p>' . esc_html__( 'MG Stealth: WPS Hide Login is active as well. Deactivate it; MG Stealth already serves the login form at the private address.', 'mg-stealth' ) . '</p></div>';
+		}
+		if ( Lockout::enabled() && Lockout::llar_active() ) {
+			echo '<div class="notice notice-warning"><p>' . esc_html__( 'MG Stealth: Limit Login Attempts Reloaded is active as well. Both count failed logins; deactivate Limit Login Attempts Reloaded, MG Stealth already locks out repeated failed attempts.', 'mg-stealth' ) . '</p></div>';
 		}
 	}
 
@@ -131,6 +174,7 @@ final class Admin {
 			'login'     => __( 'Login', 'mg-stealth' ),
 			'access'    => __( 'Access', 'mg-stealth' ),
 			'redirects' => __( 'Redirects', 'mg-stealth' ),
+			'lockout'   => __( 'Login attempts', 'mg-stealth' ),
 			'check'     => __( 'Check', 'mg-stealth' ),
 			'help'      => __( 'Help', 'mg-stealth' ),
 		);
@@ -164,6 +208,9 @@ final class Admin {
 				break;
 			case 'redirects':
 				$this->tab_redirects();
+				break;
+			case 'lockout':
+				$this->tab_lockout();
 				break;
 			case 'check':
 				$this->tab_check();
@@ -203,6 +250,7 @@ final class Admin {
 			$items[] = array( __( 'Neutral paths', 'mg-stealth' ), __( 'off', 'mg-stealth' ), 'off' );
 		}
 		$items[] = array( __( 'Private login', 'mg-stealth' ), Login::enabled() ? __( 'on', 'mg-stealth' ) : __( 'off', 'mg-stealth' ), Login::enabled() ? 'ok' : 'off' );
+		$items[] = array( __( 'Login lockout', 'mg-stealth' ), Lockout::enabled() ? __( 'on', 'mg-stealth' ) : __( 'off', 'mg-stealth' ), Lockout::enabled() ? 'ok' : 'off' );
 		$items[] = array( __( 'REST API for guests', 'mg-stealth' ), Settings::on( 'rest_guests_closed' ) ? __( 'closed (allow-list)', 'mg-stealth' ) : __( 'open', 'mg-stealth' ), Settings::on( 'rest_guests_closed' ) ? 'ok' : 'off' );
 
 		echo '<ul class="mgs-status">';
@@ -281,6 +329,49 @@ final class Admin {
 			esc_attr( $key ),
 			esc_attr( (string) Settings::get( $key ) )
 		);
+		if ( '' !== $description ) {
+			echo '<p class="description">' . wp_kses( $description, array( 'code' => array(), 'strong' => array() ) ) . '</p>';
+		}
+		echo '</td></tr>';
+	}
+
+	/**
+	 * Number row.
+	 *
+	 * @param string $key         Setting.
+	 * @param string $label       Label.
+	 * @param string $description Description.
+	 */
+	private function number( string $key, string $label, string $description = '' ): void {
+		$id     = 'mgs-' . $key;
+		$limits = Settings::NUMBERS[ $key ];
+		echo '<tr><th scope="row"><label for="' . esc_attr( $id ) . '">' . esc_html( $label ) . '</label></th><td>';
+		printf(
+			'<input type="number" class="small-text" id="%1$s" name="%2$s[%3$s]" value="%4$d" min="%5$d" max="%6$d" step="1">',
+			esc_attr( $id ),
+			esc_attr( Settings::OPTION ),
+			esc_attr( $key ),
+			(int) Settings::get( $key ),
+			(int) $limits[0],
+			(int) $limits[1]
+		);
+		if ( '' !== $description ) {
+			echo ' <span class="description">' . esc_html( $description ) . '</span>';
+		}
+		echo '</td></tr>';
+	}
+
+	/**
+	 * Textarea row (one entry per line).
+	 *
+	 * @param string $key         Setting.
+	 * @param string $label       Label.
+	 * @param string $description Description (may contain <code>).
+	 */
+	private function textarea( string $key, string $label, string $description = '' ): void {
+		$id = 'mgs-' . $key;
+		echo '<tr><th scope="row"><label for="' . esc_attr( $id ) . '">' . esc_html( $label ) . '</label></th><td>';
+		printf( '<textarea id="%1$s" class="large-text code" rows="4" name="%2$s[%3$s]" spellcheck="false">%4$s</textarea>', esc_attr( $id ), esc_attr( Settings::OPTION ), esc_attr( $key ), esc_textarea( (string) Settings::get( $key ) ) );
 		if ( '' !== $description ) {
 			echo '<p class="description">' . wp_kses( $description, array( 'code' => array(), 'strong' => array() ) ) . '</p>';
 		}
@@ -373,13 +464,118 @@ final class Admin {
 		if ( is_multisite() ) {
 			echo '<div class="notice notice-warning inline"><p>' . esc_html__( 'The private login is not available on multisite networks.', 'mg-stealth' ) . '</p></div>';
 		}
+		if ( Login::enabled() && Settings::is_guessable_slug( (string) Settings::get( 'login_slug' ) ) ) {
+			echo '<div class="notice notice-warning inline"><p>' . esc_html( Settings::guessable_warning( (string) Settings::get( 'login_slug' ) ) ) . '</p></div>';
+		}
 		if ( Login::enabled() ) {
 			echo '<div class="notice notice-info inline mgs-login-url"><p>' . esc_html__( 'Your login address (save it in your bookmarks and password manager):', 'mg-stealth' ) . '<br><code>' . esc_html( Login::url() ) . '</code></p></div>';
 		}
 		$this->form_open( 'login' );
 		$this->checkbox( 'login_enabled', __( 'Private login address', 'mg-stealth' ), __( 'After saving, the old login address stops working at once. If you lose the new one: WP-CLI <code>wp mg-stealth login-url</code>, or define <code>MG_STEALTH_DISABLE</code> in wp-config.php (Help tab).', 'mg-stealth' ) );
-		$this->text( 'login_slug', __( 'Address', 'mg-stealth' ), __( 'At least 6 characters; letters, digits and hyphens. Not "login", "admin" or anything starting with "wp-".', 'mg-stealth' ), trailingslashit( home_url() ) );
+		$this->text( 'login_slug', __( 'Address', 'mg-stealth' ), __( 'Letters, digits and hyphens, at least 3 characters; not starting with "wp-" and not an address already used on the site. A simple word such as <code>login</code> works too, but bots try it first: a random address hides the login better.', 'mg-stealth' ), trailingslashit( home_url() ) );
 		$this->form_close();
+	}
+
+	/**
+	 * Tab: lockout after failed login attempts.
+	 */
+	private function tab_lockout(): void {
+		echo '<p>' . esc_html__( 'After a few failed sign-ins from one address, further attempts are refused for a while, even with the right password. Covers the login form (also at the private address), XML-RPC and application passwords of the REST API. Every failure shows the same message, so nobody learns whether a user name exists.', 'mg-stealth' ) . '</p>';
+		if ( Lockout::llar_active() ) {
+			echo '<div class="notice notice-warning inline"><p>' . esc_html__( 'Limit Login Attempts Reloaded is active. Do not run both: import its settings below, switch the lockout on here and then deactivate Limit Login Attempts Reloaded.', 'mg-stealth' ) . '</p></div>';
+		}
+		// phpcs:disable WordPress.Security.NonceVerification.Recommended -- Messages after a redirect only.
+		if ( isset( $_GET['imported'] ) ) {
+			$ok = '1' === sanitize_key( wp_unslash( $_GET['imported'] ) );
+			echo '<div class="notice notice-' . ( $ok ? 'success' : 'warning' ) . ' inline"><p>' . esc_html( $ok ? __( 'The settings of Limit Login Attempts Reloaded were imported and the lockout is on.', 'mg-stealth' ) : __( 'No settings of Limit Login Attempts Reloaded were found.', 'mg-stealth' ) ) . '</p></div>';
+		}
+		if ( isset( $_GET['unlocked'] ) ) {
+			echo '<div class="notice notice-success inline"><p>' . esc_html__( 'Done.', 'mg-stealth' ) . '</p></div>';
+		}
+		// phpcs:enable
+		$this->form_open( 'lockout' );
+		$this->checkbox( 'lockout_enabled', __( 'Lockout after failed logins', 'mg-stealth' ), __( 'Replaces plugins such as Limit Login Attempts Reloaded. Addresses on the allow-list below are never locked out; add your own fixed address there.', 'mg-stealth' ) );
+		$this->number( 'lockout_retries', __( 'Allowed attempts', 'mg-stealth' ), __( 'failed attempts, then a lockout', 'mg-stealth' ) );
+		$this->number( 'lockout_minutes', __( 'Lockout', 'mg-stealth' ), __( 'minutes', 'mg-stealth' ) );
+		$this->number( 'lockout_escalate', __( 'Longer lockout after', 'mg-stealth' ), __( 'lockouts in a row', 'mg-stealth' ) );
+		$this->number( 'lockout_long_hours', __( 'Longer lockout', 'mg-stealth' ), __( 'hours', 'mg-stealth' ) );
+		$this->number( 'lockout_reset_hours', __( 'Counters reset after', 'mg-stealth' ), __( 'hours without a failed attempt', 'mg-stealth' ) );
+		$this->checkbox( 'lockout_by_username', __( 'Also per user name', 'mg-stealth' ), __( 'Counts failures for each user name too, so an attack from many addresses on one account is stopped. A stranger can then lock that account out for a while; allow-listed addresses still sign in.', 'mg-stealth' ) );
+		$this->checkbox( 'lockout_cloudflare', __( 'Site behind Cloudflare', 'mg-stealth' ), __( 'Takes the visitor\'s address from <code>CF-Connecting-IP</code>, only for requests that really come from Cloudflare\'s addresses.', 'mg-stealth' ) );
+		/* translators: %s: REMOTE_ADDR of the current request */
+		$this->textarea( 'lockout_trusted_proxies', __( 'Trusted proxies', 'mg-stealth' ), sprintf( __( 'Addresses or ranges (CIDR) of your own reverse proxy or load balancer: only requests from them may pass the visitor\'s address in <code>X-Forwarded-For</code>. Leave empty when the site is reached directly. This request comes from <code>%s</code>.', 'mg-stealth' ), esc_html( isset( $_SERVER['REMOTE_ADDR'] ) ? sanitize_text_field( wp_unslash( $_SERVER['REMOTE_ADDR'] ) ) : '' ) ) );
+		$this->textarea( 'lockout_allow', __( 'Allow-list', 'mg-stealth' ), __( 'Addresses or ranges that are never counted or locked out, one per line, e.g. <code>203.0.113.7</code> or <code>198.51.100.0/24</code>.', 'mg-stealth' ) );
+		$this->textarea( 'lockout_deny', __( 'Deny-list', 'mg-stealth' ), __( 'Addresses or ranges that never sign in: the login page is the normal 404 page for them.', 'mg-stealth' ) );
+		$this->checkbox( 'lockout_notify', __( 'E-mail on lockout', 'mg-stealth' ), __( 'Sends a short message to the site\'s administrator address for every lockout.', 'mg-stealth' ) );
+		$this->checkbox( 'lockout_anonymize', __( 'Shorten addresses in the log', 'mg-stealth' ), __( 'The log keeps only the start of an address (e.g. <code>203.0.113.0</code>). Lockouts keep working: the plugin stores addresses only as keyed hashes. Passwords are never stored.', 'mg-stealth' ) );
+		$this->form_close();
+
+		$llar = Lockout::llar_settings();
+		if ( ! empty( $llar ) ) {
+			echo '<h2>' . esc_html__( 'Limit Login Attempts Reloaded', 'mg-stealth' ) . '</h2>';
+			echo '<p>' . esc_html__( 'Settings of Limit Login Attempts Reloaded were found on this site (limits, allow- and deny-list). Importing them overwrites the values above and switches the lockout on; Limit Login Attempts Reloaded itself is not changed or deactivated.', 'mg-stealth' ) . '</p>';
+			echo '<form method="post" action="' . esc_url( admin_url( 'admin-post.php' ) ) . '" class="mgs-inline-form">';
+			wp_nonce_field( 'mg_stealth_llar_import' );
+			echo '<input type="hidden" name="action" value="mg_stealth_llar_import">';
+			submit_button( __( 'Import the settings', 'mg-stealth' ), 'secondary', 'submit', false );
+			echo '</form>';
+		}
+
+		$active = Lockout::active();
+		echo '<h2>' . esc_html__( 'Active lockouts', 'mg-stealth' ) . '</h2>';
+		if ( empty( $active ) ) {
+			echo '<p>' . esc_html__( 'None.', 'mg-stealth' ) . '</p>';
+		} else {
+			echo '<table class="widefat striped mgs-results"><thead><tr><th>' . esc_html__( 'Address or user name', 'mg-stealth' ) . '</th><th>' . esc_html__( 'Until', 'mg-stealth' ) . '</th><th></th></tr></thead><tbody>';
+			foreach ( $active as $key => $lock ) {
+				$who = 0 === strpos( $key, 'user:' ) ? __( 'user', 'mg-stealth' ) . ' ' . $lock['label'] : $lock['label'];
+				echo '<tr><td><code>' . esc_html( $who ) . '</code></td><td>' . esc_html( wp_date( 'Y-m-d H:i', $lock['until'] ) ) . '</td><td>';
+				$this->unlock_button( $key, __( 'Unlock', 'mg-stealth' ) );
+				echo '</td></tr>';
+			}
+			echo '</tbody></table><p>';
+			$this->unlock_button( 'all', __( 'Unlock all', 'mg-stealth' ) );
+			echo '</p>';
+		}
+
+		$log = Lockout::data()['log'];
+		echo '<h2>' . esc_html__( 'Log of lockouts', 'mg-stealth' ) . '</h2>';
+		if ( empty( $log ) ) {
+			echo '<p>' . esc_html__( 'No lockouts yet.', 'mg-stealth' ) . '</p>';
+			return;
+		}
+		/* translators: %d: number of entries */
+		echo '<p class="description">' . esc_html( sprintf( __( 'The last %d lockouts.', 'mg-stealth' ), Lockout::LOG_SIZE ) ) . '</p>';
+		echo '<table class="widefat striped mgs-results"><thead><tr><th>' . esc_html__( 'Time', 'mg-stealth' ) . '</th><th>' . esc_html__( 'Address', 'mg-stealth' ) . '</th><th>' . esc_html__( 'User name tried', 'mg-stealth' ) . '</th><th>' . esc_html__( 'Where', 'mg-stealth' ) . '</th><th>' . esc_html__( 'Until', 'mg-stealth' ) . '</th></tr></thead><tbody>';
+		foreach ( (array) $log as $row ) {
+			printf(
+				'<tr><td>%s</td><td><code>%s</code></td><td><code>%s</code></td><td>%s</td><td>%s%s</td></tr>',
+				esc_html( wp_date( 'Y-m-d H:i', (int) $row['time'] ) ),
+				esc_html( (string) $row['ip'] ),
+				esc_html( (string) $row['user'] ),
+				esc_html( (string) $row['via'] ),
+				esc_html( wp_date( 'Y-m-d H:i', (int) $row['until'] ) ),
+				! empty( $row['long'] ) ? ' <strong>(' . esc_html__( 'longer lockout', 'mg-stealth' ) . ')</strong>' : ''
+			);
+		}
+		echo '</tbody></table><p>';
+		$this->unlock_button( 'log', __( 'Empty the log', 'mg-stealth' ) );
+		echo '</p>';
+	}
+
+	/**
+	 * Small form that lifts a lockout (or empties the log).
+	 *
+	 * @param string $what  Counter key, "all" or "log".
+	 * @param string $label Button text.
+	 */
+	private function unlock_button( string $what, string $label ): void {
+		echo '<form method="post" action="' . esc_url( admin_url( 'admin-post.php' ) ) . '" class="mgs-inline-form">';
+		wp_nonce_field( 'mg_stealth_unlock' );
+		echo '<input type="hidden" name="action" value="mg_stealth_unlock">';
+		echo '<input type="hidden" name="what" value="' . esc_attr( $what ) . '">';
+		submit_button( $label, 'secondary small', 'submit', false );
+		echo '</form>';
 	}
 
 	/**
@@ -405,7 +601,7 @@ final class Admin {
 		$this->checkbox( 'block_feeds', __( 'RSS feeds', 'mg-stealth' ), __( 'All feeds become the 404 page and their links disappear. Leave off if people or services read the feed.', 'mg-stealth' ) );
 		$this->checkbox( 'block_cron', __( 'wp-cron.php', 'mg-stealth' ), __( 'Called directly it is the 404 page; WordPress\' own calls carry a secret key and work.', 'mg-stealth' ) );
 		echo '<tr><th scope="row"></th><td><p class="description">' . esc_html__( 'For a server cron job use this address:', 'mg-stealth' ) . ' <code>' . esc_html( Access::cron_url() ) . '</code></p></td></tr>';
-		$this->checkbox( 'block_shortcuts', __( '/login, /admin, /dashboard', 'mg-stealth' ), __( 'No redirect to the login form from these short addresses.', 'mg-stealth' ) );
+		$this->checkbox( 'block_shortcuts', __( '/login, /admin, /dashboard', 'mg-stealth' ), __( 'No redirect to the login form from these short addresses (the one chosen as the private login address shows the form).', 'mg-stealth' ) );
 		$this->checkbox( 'neutral_sitemap', __( 'Sitemap without "wp-"', 'mg-stealth' ), __( 'WordPress\' own sitemap at <code>/sitemap.xml</code> instead of <code>/wp-sitemap.xml</code>, without its stylesheet. Has no effect when an SEO plugin provides the sitemap. Submit the new address in Search Console.', 'mg-stealth' ) );
 		$this->form_close();
 	}

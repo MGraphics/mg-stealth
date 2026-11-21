@@ -45,6 +45,9 @@ final class Self_Check {
 				$verdict = 'allowed';
 			} elseif ( 'open' === $probe['expect'] ) {
 				$verdict = ( $answer['code'] >= 200 && $answer['code'] < 400 ) ? 'ok' : 'error';
+			} elseif ( 'login' === $probe['expect'] ) {
+				// The login screen itself, not a redirect elsewhere.
+				$verdict = 200 === $answer['code'] ? 'ok' : 'error';
 			} elseif ( $same ) {
 				$verdict = 'hidden';
 			} elseif ( 404 === $answer['code'] || 403 === $answer['code'] ) {
@@ -80,7 +83,8 @@ final class Self_Check {
 	}
 
 	/**
-	 * Addresses probed. "hidden": should look exactly like the 404 page; "open": should work.
+	 * Addresses probed. "hidden": should look exactly like the 404 page; "open": should work;
+	 * "login": should answer 200 with the login form.
 	 *
 	 * @return array<int,array{label:string,path:string,method:string,expect:string}>
 	 */
@@ -123,10 +127,15 @@ final class Self_Check {
 			array( 'paths', ( $real['includes'] ?? 'wp-includes' ) . '/js/jquery/jquery.min.js' ),
 			array( 'paths', ( $real['includes'] ?? 'wp-includes' ) . '/css/dashicons.min.css' ),
 			array( 'paths', ( $real['plugins'] ?? 'wp-content/plugins' ) . '/' . dirname( MG_STEALTH_BASENAME ) . '/readme.txt' ),
-			array( 'shortcuts', 'login' ),
-			array( 'shortcuts', 'admin' ),
-			array( 'shortcuts', 'dashboard' ),
 		);
+		// The short addresses WordPress redirects to the login form; the one chosen as the private
+		// login address is expected to show the form instead.
+		$slug = Login::enabled() ? (string) Settings::get( 'login_slug' ) : '';
+		foreach ( array( 'login', 'admin', 'dashboard' ) as $shortcut ) {
+			if ( $shortcut !== $slug ) {
+				$list[] = array( 'shortcuts', $shortcut );
+			}
+		}
 		$probes = array();
 		foreach ( $list as $item ) {
 			$probes[] = array(
@@ -145,9 +154,9 @@ final class Self_Check {
 		if ( Login::enabled() ) {
 			$probes[] = array(
 				'label'  => 'private-login',
-				'path'   => '/' . user_trailingslashit( (string) Settings::get( 'login_slug' ) ),
+				'path'   => '/' . user_trailingslashit( $slug ),
 				'method' => 'GET',
-				'expect' => 'open',
+				'expect' => 'login',
 			);
 		}
 		if ( Access::neutral_sitemap_active() ) {

@@ -18,9 +18,10 @@ Download `mg-stealth-<version>.zip` from the [latest release](https://github.com
 |---|---|---|
 | Page source | generator tags, RSD, wlwmanifest, shortlink, pingback, REST/oEmbed links, emoji, speculation rules, `?ver=` → per-site hash, `X-Powered-By`, `X-Pingback`, `X-Redirect-By`, REST `Link` headers, 1984 `Expires`, asset tag ids, theme body classes, HTML comments, `sourceURL` comments, login page and e-mail branding | on |
 | Paths | `/wp-content/`, `/wp-includes/`, plugins, uploads, `admin-ajax.php`, `wp-comments-post.php`, `/wp-json/` under per-site neutral names (managed `.htaccess` block, verified before use), hashed plugin/theme folder names, original paths 404 for guests, `wp-config.php` snippet for a real move | off |
-| Login | private login address; `wp-login.php` and `/wp-admin/` for guests → the site's 404 page; login links on public pages point home | off |
+| Login | private login address (random by default, or a simple word such as `login`, saved with a warning); `wp-login.php` and `/wp-admin/` for guests → the site's 404 page; login links on public pages point home | off |
 | Access | REST API for guests only on an allow-list; 404 for XML-RPC, core files, authors, direct `wp-cron.php`, `/login` `/admin` `/dashboard`, embeds, (optional) feeds; sitemap at `/sitemap.xml` | on (feeds off) |
 | Redirects | one 301 to `https://` and the host of the site address (with or without `www`), path and query kept, `/.well-known/` excluded, `X-Forwarded-Proto` and Cloudflare `CF-Visitor` aware | off |
+| Login attempts | lockout after failed logins (4 attempts → 20 min, 4 lockouts → 24 h, reset after 12 h, adjustable), per IP and optionally per user name; login form, XML-RPC, application passwords; generic error message; trusted proxies / Cloudflare; allow- and deny-list; log with unlock; optional e-mail; import from Limit Login Attempts Reloaded | off |
 | Check | anonymous loopback probe of typical addresses and pages, with the traces it finds | – |
 
 Everything is undone on deactivation (the `.htaccess` block is removed and WordPress' rewrite rules are rebuilt). Deleting the plugin also removes its settings.
@@ -29,7 +30,7 @@ Everything is undone on deactivation (the `.htaccess` block is removed and WordP
 
 - `define( 'MG_STEALTH_DISABLE', true );` in `wp-config.php` → every rule off, `.htaccess` block removed on the next request;
 - rename `wp-content/plugins/mg-stealth` → the `.htaccess` rules stop immediately (each one checks that the plugin file exists);
-- WP-CLI: `wp mg-stealth status | sync | rules | remove-rules | login-url | check`.
+- WP-CLI: `wp mg-stealth status | sync | rules | remove-rules | login-url | unlock <ip>|--user=<login>|--all | lockouts | check`.
 
 ## Updates (GitHub Releases)
 
@@ -40,7 +41,7 @@ The GitHub build bundles [plugin-update-checker](https://github.com/YahnisElsts/
 1. Bump the version in three places: the `Version:` header and `MG_STEALTH_VERSION` in `mg-stealth.php`, and `Stable tag:` in `readme.txt`; add a changelog entry to `readme.txt`.
 2. `bin/i18n.sh` when strings changed; `vendor/bin/phpunit`.
 3. Commit, tag `v<version>` and push the tag: `git tag v1.0.1 && git push origin main v1.0.1`.
-4. The tag workflow (`.github/workflows/release.yml`) runs the tests, builds both packages with `bin/build.sh` and creates the GitHub Release `v<version>` with `mg-stealth-<version>.zip` and `mg-stealth-<version>-wporg.zip` as release assets. By hand instead: `bin/build.sh && gh release create v1.0.1 build/mg-stealth-1.0.1.zip build/mg-stealth-1.0.1-wporg.zip`.
+4. The workflow (`.github/workflows/release.yml`) runs the tests, builds both packages with `bin/build.sh`, unpacks the GitHub package into a fresh WordPress and runs its update check against a release fixture (`tests/build/update-check.sh`); for a tag it then creates the GitHub Release `v<version>` from exactly those files, with `mg-stealth-<version>.zip` and `mg-stealth-<version>-wporg.zip` as release assets. By hand instead: `bin/build.sh && gh release create v1.0.1 build/mg-stealth-1.0.1.zip build/mg-stealth-1.0.1-wporg.zip`.
 5. Sites with the plugin see the update within 12 hours (or at once via **Dashboard → Updates → Check again**).
 
 The repository must stay **public**, otherwise sites cannot read the releases without a token.
@@ -51,6 +52,8 @@ The repository must stay **public**, otherwise sites cannot read the releases wi
 bin/dev-setup.sh                         # WordPress 7.1 + MariaDB in Docker, http://127.0.0.1:8476
 composer install && vendor/bin/phpunit   # unit tests
 tests/integration/probe.sh http://127.0.0.1:8476 /tmp/probe   # anonymous curl matrix
+tests/integration/login.sh http://127.0.0.1:8476 <slug> admin <password> [--lockout 4]   # login address / lockout
+tests/build/update-check.sh build/mg-stealth-<v>.zip   # built package: update check (needs wp-cli + MySQL)
 bin/build.sh                             # build/mg-stealth-<v>.zip and build/mg-stealth-<v>-wporg.zip
 bin/i18n.sh                              # .pot, Polish .po/.mo
 docker compose run --rm cli wp plugin check /var/www/html/wp-content/plugins/mg-stealth-wporg

@@ -1,0 +1,24 @@
+{
+	"tag_name": "v9.9.9",
+	"name": "MG Stealth 9.9.9",
+	"draft": false,
+	"prerelease": false,
+	"created_at": "2026-11-21T12:00:00Z",
+	"published_at": "2026-11-21T12:00:00Z",
+	"zipball_url": "https://api.github.com/repos/MGraphics/mg-stealth/zipball/v9.9.9",
+	"body": "## What's new\n\n* **Private login** at `/login/`\n* Lockout after failed logins\n\nSee [readme.txt](https://github.com/MGraphics/mg-stealth/blob/main/readme.txt).",
+	"assets": [
+		{
+			"name": "mg-stealth-9.9.9-wporg.zip",
+			"url": "https://api.github.com/repos/MGraphics/mg-stealth/releases/assets/2",
+			"browser_download_url": "https://github.com/MGraphics/mg-stealth/releases/download/v9.9.9/mg-stealth-9.9.9-wporg.zip",
+			"download_count": 1
+		},
+		{
+			"name": "mg-stealth-9.9.9.zip",
+			"url": "https://api.github.com/repos/MGraphics/mg-stealth/releases/assets/1",
+			"browser_download_url": "https://github.com/MGraphics/mg-stealth/releases/download/v9.9.9/mg-stealth-9.9.9.zip",
+			"download_count": 7
+		}
+	]
+}

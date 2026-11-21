@@ -4,7 +4,7 @@ Tags: security, hide wordpress, login, rest api, htaccess
 Requires at least: 6.4
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.0.0
+Stable tag: 1.0.1
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -34,6 +34,15 @@ MG Stealth removes the usual signs of WordPress from what a visitor (or a scanne
 
 * The login form moves to a private address that is never printed on public pages.
 * `wp-login.php` and the admin area (for visitors without a session) answer with the site's normal 404 page.
+* Any free address works, a random one (the default, e.g. `/k3x9-panel-q8m2/`) or a simple word such as `/login/`; a simple word is saved with a warning, as bots try it first. Addresses already used by a page, post, term, route, real folder or one of the neutral paths are refused.
+
+**Lockout after failed logins**
+
+* After 4 failed sign-ins from one address, further attempts are refused for 20 minutes, even with the right password; after 4 lockouts in a row for 24 hours; counters reset after 12 hours (all adjustable, like Limit Login Attempts Reloaded).
+* Covers the login form at the private address, XML-RPC and application passwords of the REST API; optionally counts per user name too.
+* The same message for an unknown user and a wrong password; the visitor's address is read from proxy headers only when the request comes from a trusted proxy or Cloudflare.
+* Allow-list and deny-list (addresses and CIDR ranges), a log of the last 100 lockouts with manual unlock, optional e-mail to the administrator, optional shortened addresses in the log. Passwords are never stored.
+* Can import the settings of Limit Login Attempts Reloaded.
 
 **Typical addresses answer like missing pages**
 
@@ -53,7 +62,7 @@ No data is sent anywhere, no credit link is printed, nothing is tracked.
 
 = Po polsku =
 
-MG Stealth utrudnia rozpoznanie, że strona działa na WordPressie: czyści źródło strony i nagłówki, nadaje neutralne nazwy katalogom /wp-content/, /wp-includes/ i /wp-json/, przenosi logowanie pod prywatny adres, zamyka REST API dla gości (z listą wyjątków dla formularzy), a typowe adresy WordPressa (xmlrpc.php, readme.html, ?author=1, wp-cron.php …) odpowiadają zwykłą stroną 404. Opcjonalnie przekierowuje jednym krokiem 301 z http na https i z www na domenę bez www (lub odwrotnie). Zakładka „Sprawdź” pokazuje, co jeszcze zdradza WordPressa. Każdą funkcję można wyłączyć, a wyłączenie wtyczki przywraca ustawienia domyślne. Wtyczka jest w pełni przetłumaczona na polski.
+MG Stealth utrudnia rozpoznanie, że strona działa na WordPressie: czyści źródło strony i nagłówki, nadaje neutralne nazwy katalogom /wp-content/, /wp-includes/ i /wp-json/, przenosi logowanie pod prywatny adres (losowy albo prosty, np. /login/), blokuje logowanie po kilku nieudanych próbach (zamiast Limit Login Attempts Reloaded), zamyka REST API dla gości (z listą wyjątków dla formularzy), a typowe adresy WordPressa (xmlrpc.php, readme.html, ?author=1, wp-cron.php …) odpowiadają zwykłą stroną 404. Opcjonalnie przekierowuje jednym krokiem 301 z http na https i z www na domenę bez www (lub odwrotnie). Zakładka „Sprawdź” pokazuje, co jeszcze zdradza WordPressa. Każdą funkcję można wyłączyć, a wyłączenie wtyczki przywraca ustawienia domyślne. Wtyczka jest w pełni przetłumaczona na polski.
 
 == Installation ==
 
@@ -78,6 +87,18 @@ Any one of these switches everything off:
 * rename the folder `wp-content/plugins/mg-stealth` – the `.htaccess` rules check that the plugin exists and stop at once;
 * delete the lines from `# BEGIN MG Stealth` to `# END MG Stealth` in `.htaccess`;
 * `wp mg-stealth remove-rules` or `wp plugin deactivate mg-stealth`.
+
+= Can the login address be simply /login/? =
+
+Yes. Type `login` (or `panel`, `admin` …) in the Login tab. `/login/` then shows the login form, while `wp-login.php`, `/wp-admin/` for visitors and the other shortcuts (`/admin/`, `/dashboard/`) stay the normal 404 page. A simple address is easy to guess, so the plugin shows a warning: switch on the lockout after failed logins (Login attempts tab) and use strong passwords.
+
+= I locked myself out after failed logins. =
+
+Wait until the lockout ends, or use WP-CLI: `wp mg-stealth unlock <your IP address>` (or `--all`). `define( 'MG_STEALTH_DISABLE', true );` in `wp-config.php` switches the lockout off together with everything else. Add your fixed address to the allow-list to never be locked out.
+
+= Can it replace Limit Login Attempts Reloaded? =
+
+Yes. The Login attempts tab imports its limits, allow-list and deny-list; then switch the lockout on and deactivate Limit Login Attempts Reloaded (do not run both).
 
 = Does it work on nginx? =
 
@@ -108,11 +129,20 @@ No. The check only asks your own site. The build distributed on GitHub looks for
 
 == Changelog ==
 
+= 1.0.1 =
+* The private login address may now be a simple word such as `login`, `panel` or `admin` (at least 3 characters). It is saved with a warning that it is easy to guess. Addresses starting with "wp-", WordPress' own addresses (feed, page, search, sitemap …) and addresses already used by a page, post, term, registered route, real folder or neutral path are refused with a message. New installs still get a random address.
+* With the address `login`, `/login/` shows the login form (with the MG Login design when that plugin is active); `wp-login.php`, `/wp-admin/` for visitors, `/admin/` and `/dashboard/` stay the normal 404 page. The check expects 200 for the chosen address and no longer counts it as a leaked shortcut.
+* New: lockout after failed logins (Login attempts tab), off until switched on: per IP address and optionally per user name, longer lockouts after repeated ones, counters reset after a set time, login form, XML-RPC and application passwords, one message for every failure, proxy and Cloudflare aware, allow-list and deny-list, log with manual unlock, optional e-mail, import from Limit Login Attempts Reloaded. WP-CLI: `wp mg-stealth unlock`, `wp mg-stealth lockouts`.
+* Fixed: the GitHub package missed the update checker's own `vendor` folder, so checking a release with notes ended in a fatal error ("Class Parsedown not found"). The build now leaves out only the development `vendor` folder, and every build is tested with an update check before release.
+
 = 1.0.0 =
 * Updates are delivered through the GitHub Releases of https://github.com/MGraphics/mg-stealth (release asset mg-stealth-<version>.zip).
 * First release: clean page source and headers, neutral paths with a managed .htaccess block, private login, REST API allow-list, 404 for typical WordPress addresses, neutral sitemap, one-hop https/www redirects, self-check, emergency switch, Polish translation.
 
 == Upgrade Notice ==
+
+= 1.0.1 =
+Fixes a fatal error when checking for updates; simple login addresses such as /login/; lockout after failed logins.
 
 = 1.0.0 =
 First release.

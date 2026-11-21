@@ -24,5 +24,6 @@ if ( is_readable( $mg_stealth_file ) && 'direct' === get_filesystem_method( arra
 
 delete_option( 'mg_stealth_settings' );
 delete_option( 'mg_stealth_state' );
+delete_option( 'mg_stealth_lockout' );
 delete_transient( 'mg_stealth_404_page' );
 delete_option( 'rewrite_rules' );

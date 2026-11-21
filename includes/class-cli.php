@@ -1,6 +1,6 @@
 <?php
 /**
- * WP-CLI commands: status, server rules, login address, self-check.
+ * WP-CLI commands: status, server rules, login address, lockouts, self-check.
  *
  * @package MG_Stealth
  */
@@ -25,6 +25,7 @@ final class CLI {
 		\WP_CLI::line( 'Server rules:   ' . $state['rules_status'] . ( $state['rules_error'] ? ' (' . $state['rules_error'] . ')' : '' ) );
 		\WP_CLI::line( 'Neutral paths:  ' . ( Paths::active() ? 'active' : ( Settings::on( 'paths_enabled' ) ? 'enabled, not verified' : 'off' ) ) );
 		\WP_CLI::line( 'Private login:  ' . ( Login::enabled() ? 'on' : 'off' ) );
+		\WP_CLI::line( 'Login lockout:  ' . ( Lockout::enabled() ? 'on (' . count( Lockout::active() ) . ' active)' : 'off' ) );
 		\WP_CLI::line( 'Emergency off:  ' . ( Plugin::disabled_by_constant() ? 'yes (MG_STEALTH_DISABLE)' : 'no' ) );
 	}
 
@@ -76,6 +77,71 @@ final class CLI {
 	 */
 	public function login_url( $args, $assoc_args ): void {
 		\WP_CLI::line( Login::enabled() ? Login::url() : wp_login_url() );
+	}
+
+	/**
+	 * Lifts the lockout of an address or a user name after failed login attempts.
+	 *
+	 * [<address>]
+	 * : IP address of the visitor.
+	 *
+	 * [--user=<login>]
+	 * : User name (when lockouts per user name are on).
+	 *
+	 * [--all]
+	 * : Lift every lockout and clear every counter.
+	 *
+	 * ## EXAMPLES
+	 *
+	 *     wp mg-stealth unlock 203.0.113.7
+	 *     wp mg-stealth unlock --user=admin
+	 *     wp mg-stealth unlock --all
+	 *
+	 * @param array $args       Positional arguments.
+	 * @param array $assoc_args Named arguments.
+	 */
+	public function unlock( $args, $assoc_args ): void {
+		if ( ! empty( $assoc_args['all'] ) ) {
+			\WP_CLI::success( sprintf( 'Lockouts lifted: %d.', Lockout::unlock_all() ) );
+			return;
+		}
+		$keys = array();
+		if ( ! empty( $args[0] ) ) {
+			$ip = Lockout::valid_ip( (string) $args[0] );
+			if ( '' === $ip ) {
+				\WP_CLI::error( 'Not a valid IP address: ' . $args[0] );
+			}
+			$keys[] = Lockout::ip_key( $ip );
+		}
+		if ( ! empty( $assoc_args['user'] ) ) {
+			$keys[] = Lockout::user_key( (string) $assoc_args['user'] );
+		}
+		if ( empty( $keys ) ) {
+			\WP_CLI::error( 'Give an IP address, --user=<login> or --all.' );
+		}
+		$count = Lockout::unlock( $keys );
+		\WP_CLI::success( $count > 0 ? sprintf( 'Lockouts lifted: %d.', $count ) : 'No active lockout; failed attempts cleared.' );
+	}
+
+	/**
+	 * Lists the active lockouts after failed login attempts.
+	 *
+	 * @param array $args       Positional arguments.
+	 * @param array $assoc_args Named arguments.
+	 */
+	public function lockouts( $args, $assoc_args ): void {
+		$rows = array();
+		foreach ( Lockout::active() as $key => $lock ) {
+			$rows[] = array(
+				'who'   => ( 0 === strpos( $key, 'user:' ) ? 'user ' : '' ) . $lock['label'],
+				'until' => wp_date( 'Y-m-d H:i', $lock['until'] ),
+			);
+		}
+		if ( empty( $rows ) ) {
+			\WP_CLI::line( 'No active lockouts.' );
+			return;
+		}
+		\WP_CLI\Utils\format_items( 'table', $rows, array( 'who', 'until' ) );
 	}
 
 	/**

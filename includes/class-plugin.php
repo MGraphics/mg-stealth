@@ -106,6 +106,7 @@ final class Plugin {
 		add_action( 'plugins_loaded', array( $access, 'guard_entry_points' ), 0 );
 
 		( new Login() )->register();
+		( new Lockout() )->register();
 		$this->cleaner->register();
 
 		add_action( 'init', array( $this, 'maybe_flush_rewrite_rules' ), 999 );
@@ -150,7 +151,7 @@ final class Plugin {
 		Settings::ensure_initialized();
 		// A site that used WPS Hide Login keeps its private address (still off until enabled here).
 		$whl = sanitize_title( (string) get_option( 'whl_page', '' ) );
-		if ( '' !== $whl && Settings::is_valid_slug( $whl ) && ! Settings::on( 'login_enabled' ) ) {
+		if ( '' !== $whl && ! Settings::on( 'login_enabled' ) && '' === Settings::slug_conflict( $whl, Settings::all() ) ) {
 			$all               = Settings::all();
 			$all['login_slug'] = $whl;
 			update_option( Settings::OPTION, $all, true );

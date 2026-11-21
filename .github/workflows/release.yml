@@ -1,5 +1,5 @@
-# MG Stealth: tests on every push; a tag v<version> builds the packages and creates the GitHub Release
-# whose asset mg-stealth-<version>.zip the plugin's update checker installs.
+# MG Stealth: tests and a test build on every push; a tag v<version> publishes that build as the GitHub
+# Release whose asset mg-stealth-<version>.zip the plugin's update checker installs.
 name: release
 
 on:
@@ -24,21 +24,52 @@ jobs:
       - run: vendor/bin/phpunit
       - run: find . -path ./vendor -prune -o -path ./lib -prune -o -name '*.php' -print0 | xargs -0 -n1 php -l > /dev/null
 
+  build:
+    # The packages are built once here and the release job publishes exactly these files.
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          extensions: mysqli
+          tools: wp-cli
+      - run: sudo systemctl start mysql.service
+      - run: bin/build.sh
+      - name: Update check of the built package (release fixture with a Markdown body)
+        run: tests/build/update-check.sh build/mg-stealth-*[0-9].zip
+        env:
+          DB_HOST: 127.0.0.1
+          DB_USER: root
+          DB_PASS: root
+      - uses: actions/upload-artifact@v4
+        with:
+          name: packages
+          path: build/*.zip
+          if-no-files-found: error
+
   release:
     if: startsWith(github.ref, 'refs/tags/v')
-    needs: test
+    needs: build
     runs-on: ubuntu-latest
     permissions:
       contents: write
     steps:
       - uses: actions/checkout@v4
-      - name: Build and release
+      - uses: actions/download-artifact@v4
+        with:
+          name: packages
+          path: build
+      - name: Release
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           VERSION="${GITHUB_REF_NAME#v}"
-          bin/build.sh
+          HEADER="$(sed -n 's/^ \* Version: *//p' mg-stealth.php | head -1 | tr -d '[:space:]')"
+          test "$VERSION" = "$HEADER" || { echo "Tag $GITHUB_REF_NAME does not match the plugin version $HEADER" >&2; exit 1; }
           test -f "build/mg-stealth-${VERSION}.zip"
+          test -f "build/mg-stealth-${VERSION}-wporg.zip"
           gh release create "$GITHUB_REF_NAME" \
             "build/mg-stealth-${VERSION}.zip" "build/mg-stealth-${VERSION}-wporg.zip" \
             --title "MG Stealth ${VERSION}" \

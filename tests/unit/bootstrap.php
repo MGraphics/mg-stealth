@@ -10,6 +10,7 @@ require dirname( __DIR__, 2 ) . '/vendor/autoload.php';
 
 $GLOBALS['mgs_options']  = array();
 $GLOBALS['mgs_errors']   = array();
+$GLOBALS['mgs_warnings'] = array();
 
 function __( $text ) {
 	return $text;
@@ -43,11 +44,19 @@ function update_option( $name, $value, $autoload = null ) {
 	$GLOBALS['mgs_options'][ $name ] = $value;
 	return true;
 }
-function add_settings_error( $setting, $code, $message ) {
-	$GLOBALS['mgs_errors'][] = $message;
+function add_settings_error( $setting, $code, $message, $type = 'error' ) {
+	if ( 'error' === $type ) {
+		$GLOBALS['mgs_errors'][] = $message;
+	} else {
+		$GLOBALS['mgs_warnings'][] = $message;
+	}
+}
+function _n( $single, $plural, $number ) {
+	return 1 === (int) $number ? $single : $plural;
 }
 
 require dirname( __DIR__, 2 ) . '/includes/class-output-filter.php';
 require dirname( __DIR__, 2 ) . '/includes/class-htaccess.php';
 require dirname( __DIR__, 2 ) . '/includes/class-redirect-rules.php';
 require dirname( __DIR__, 2 ) . '/includes/class-settings.php';
+require dirname( __DIR__, 2 ) . '/includes/class-lockout.php';

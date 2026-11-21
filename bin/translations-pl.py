@@ -13,8 +13,8 @@ ROOT = pathlib.Path(__file__).resolve().parent.parent
 PL = {
     "MG Stealth": "MG Stealth",
     "https://mgraphics.com.pl/mg-stealth/": "https://mgraphics.com.pl/mg-stealth/",
-    "Makes it hard to tell that a site runs WordPress: clean page source and headers, neutral public paths, a private login address, closed REST API for guests, the normal 404 page for typical WordPress addresses and one-hop 301 redirects to https and the main host name.":
-        "Utrudnia rozpoznanie, że strona działa na WordPressie: czyste źródło strony i nagłówki, neutralne ścieżki publiczne, prywatny adres logowania, REST API zamknięte dla gości, zwykła strona 404 pod typowymi adresami WordPressa oraz przekierowania 301 w jednym kroku na https i główną nazwę domeny.",
+    "Makes it hard to tell that a site runs WordPress: clean page source and headers, neutral public paths, a private login address, a lockout after failed logins, closed REST API for guests, the normal 404 page for typical WordPress addresses and one-hop 301 redirects to https and the main host name.":
+        "Utrudnia rozpoznanie, że strona działa na WordPressie: czyste źródło strony i nagłówki, neutralne ścieżki publiczne, prywatny adres logowania, blokada po nieudanych próbach logowania, REST API zamknięte dla gości, zwykła strona 404 pod typowymi adresami WordPressa oraz przekierowania 301 w jednym kroku na https i główną nazwę domeny.",
     "MGraphics": "MGraphics",
     "https://mgraphics.com.pl": "https://mgraphics.com.pl",
     "Settings": "Ustawienia",
@@ -144,7 +144,7 @@ PL = {
         "Wywołany bezpośrednio daje stronę 404; własne wywołania WordPressa mają tajny klucz i działają.",
     "For a server cron job use this address:": "Dla zadania cron na serwerze użyj tego adresu:",
     "/login, /admin, /dashboard": "/login, /admin, /dashboard",
-    "No redirect to the login form from these short addresses.": "Bez przekierowania z tych krótkich adresów na formularz logowania.",
+    "No redirect to the login form from these short addresses (the one chosen as the private login address shows the form).": "Bez przekierowania z tych krótkich adresów na formularz logowania.",
     "Sitemap without \\\"wp-\\\"": "Mapa strony bez „wp-”",
     "WordPress' own sitemap at <code>/sitemap.xml</code> instead of <code>/wp-sitemap.xml</code>, without its stylesheet. Has no effect when an SEO plugin provides the sitemap. Submit the new address in Search Console.":
         "Wbudowana mapa strony WordPressa pod <code>/sitemap.xml</code> zamiast <code>/wp-sitemap.xml</code>, bez arkusza stylów. Nie działa, gdy mapę dostarcza wtyczka SEO. Nowy adres zgłoś w Search Console.",
@@ -231,11 +231,112 @@ PL = {
     "The name \\\"%s\\\" is used twice.": "Nazwa „%s” jest użyta dwa razy.",
     "A real folder \\\"%s\\\" already exists in the site root; choose another name.": "W katalogu głównym strony istnieje już katalog „%s”; wybierz inną nazwę.",
     "The addresses for AJAX, comments and the REST API must be a single word.": "Adresy AJAX, komentarzy i REST API muszą być jednym słowem.",
+    "https://github.com/MGraphics/mg-stealth": "https://github.com/MGraphics/mg-stealth",
+    "MG Stealth: Limit Login Attempts Reloaded is active as well. Both count failed logins; deactivate Limit Login Attempts Reloaded, MG Stealth already locks out repeated failed attempts.":
+        "MG Stealth: włączona jest też wtyczka Limit Login Attempts Reloaded. Obie liczą nieudane logowania – wyłącz Limit Login Attempts Reloaded, MG Stealth sama blokuje powtarzane nieudane próby.",
+    "Login attempts": "Próby logowania",
+    "Login lockout": "Blokada logowania",
+    "Letters, digits and hyphens, at least 3 characters; not starting with \\\"wp-\\\" and not an address already used on the site. A simple word such as <code>login</code> works too, but bots try it first: a random address hides the login better.":
+        "Litery, cyfry i myślniki, co najmniej 3 znaki; nie może zaczynać się od „wp-” ani być adresem już używanym na stronie. Można też wpisać proste słowo, np. <code>login</code>, ale boty sprawdzają je w pierwszej kolejności: losowy adres lepiej ukrywa logowanie.",
+    "After a few failed sign-ins from one address, further attempts are refused for a while, even with the right password. Covers the login form (also at the private address), XML-RPC and application passwords of the REST API. Every failure shows the same message, so nobody learns whether a user name exists.":
+        "Po kilku nieudanych logowaniach z jednego adresu kolejne próby są przez pewien czas odrzucane, nawet z poprawnym hasłem. Dotyczy formularza logowania (także pod prywatnym adresem), XML-RPC i haseł aplikacji w REST API. Każda nieudana próba daje ten sam komunikat, więc nikt nie dowie się, czy dana nazwa użytkownika istnieje.",
+    "Limit Login Attempts Reloaded is active. Do not run both: import its settings below, switch the lockout on here and then deactivate Limit Login Attempts Reloaded.":
+        "Włączona jest wtyczka Limit Login Attempts Reloaded. Nie używaj obu naraz: zaimportuj poniżej jej ustawienia, włącz tutaj blokadę, a potem wyłącz Limit Login Attempts Reloaded.",
+    "The settings of Limit Login Attempts Reloaded were imported and the lockout is on.":
+        "Ustawienia Limit Login Attempts Reloaded zostały zaimportowane, a blokada jest włączona.",
+    "No settings of Limit Login Attempts Reloaded were found.": "Nie znaleziono ustawień Limit Login Attempts Reloaded.",
+    "Done.": "Gotowe.",
+    "Lockout after failed logins": "Blokada po nieudanych logowaniach",
+    "Replaces plugins such as Limit Login Attempts Reloaded. Addresses on the allow-list below are never locked out; add your own fixed address there.":
+        "Zastępuje wtyczki takie jak Limit Login Attempts Reloaded. Adresy z listy dozwolonych poniżej nigdy nie są blokowane – dopisz tam swój stały adres.",
+    "Allowed attempts": "Dozwolone próby",
+    "failed attempts, then a lockout": "nieudanych prób, potem blokada",
+    "Lockout": "Blokada",
+    "minutes": "minut",
+    "Longer lockout after": "Dłuższa blokada po",
+    "lockouts in a row": "blokadach z rzędu",
+    "Longer lockout": "Dłuższa blokada",
+    "hours": "godzin",
+    "Counters reset after": "Liczniki zerowane po",
+    "hours without a failed attempt": "godzinach bez nieudanej próby",
+    "Also per user name": "Także według nazwy użytkownika",
+    "Counts failures for each user name too, so an attack from many addresses on one account is stopped. A stranger can then lock that account out for a while; allow-listed addresses still sign in.":
+        "Liczy nieudane próby także dla każdej nazwy użytkownika, co zatrzymuje atak na jedno konto z wielu adresów. Obcy może wtedy na jakiś czas zablokować to konto; adresy z listy dozwolonych nadal się logują.",
+    "Site behind Cloudflare": "Strona za Cloudflare",
+    "Takes the visitor's address from <code>CF-Connecting-IP</code>, only for requests that really come from Cloudflare's addresses.":
+        "Bierze adres odwiedzającego z nagłówka <code>CF-Connecting-IP</code>, tylko dla żądań, które naprawdę przychodzą z adresów Cloudflare.",
+    "Trusted proxies": "Zaufane serwery proxy",
+    "Addresses or ranges (CIDR) of your own reverse proxy or load balancer: only requests from them may pass the visitor's address in <code>X-Forwarded-For</code>. Leave empty when the site is reached directly. This request comes from <code>%s</code>.":
+        "Adresy lub zakresy (CIDR) twojego reverse proxy albo load balancera: tylko żądania od nich mogą przekazać adres odwiedzającego w <code>X-Forwarded-For</code>. Zostaw puste, gdy strona jest osiągalna bezpośrednio. To żądanie przyszło z <code>%s</code>.",
+    "Allow-list": "Lista dozwolonych",
+    "Addresses or ranges that are never counted or locked out, one per line, e.g. <code>203.0.113.7</code> or <code>198.51.100.0/24</code>.":
+        "Adresy lub zakresy, które nigdy nie są liczone ani blokowane, po jednym w wierszu, np. <code>203.0.113.7</code> albo <code>198.51.100.0/24</code>.",
+    "Deny-list": "Lista zablokowanych",
+    "Addresses or ranges that never sign in: the login page is the normal 404 page for them.":
+        "Adresy lub zakresy, które nigdy się nie zalogują: strona logowania jest dla nich zwykłą stroną 404.",
+    "E-mail on lockout": "E-mail przy blokadzie",
+    "Sends a short message to the site's administrator address for every lockout.":
+        "Wysyła krótką wiadomość na adres administratora strony przy każdej blokadzie.",
+    "Shorten addresses in the log": "Skracaj adresy w dzienniku",
+    "The log keeps only the start of an address (e.g. <code>203.0.113.0</code>). Lockouts keep working: the plugin stores addresses only as keyed hashes. Passwords are never stored.":
+        "Dziennik zachowuje tylko początek adresu (np. <code>203.0.113.0</code>). Blokady działają dalej: wtyczka przechowuje adresy wyłącznie jako skróty z kluczem. Hasła nigdy nie są zapisywane.",
+    "Limit Login Attempts Reloaded": "Limit Login Attempts Reloaded",
+    "Settings of Limit Login Attempts Reloaded were found on this site (limits, allow- and deny-list). Importing them overwrites the values above and switches the lockout on; Limit Login Attempts Reloaded itself is not changed or deactivated.":
+        "Na tej stronie są ustawienia Limit Login Attempts Reloaded (limity, lista dozwolonych i zablokowanych). Import nadpisze powyższe wartości i włączy blokadę; sama wtyczka Limit Login Attempts Reloaded nie zostanie zmieniona ani wyłączona.",
+    "Import the settings": "Importuj ustawienia",
+    "Active lockouts": "Aktywne blokady",
+    "None.": "Brak.",
+    "Address or user name": "Adres lub nazwa użytkownika",
+    "Until": "Do",
+    "user": "użytkownik",
+    "Unlock": "Odblokuj",
+    "Unlock all": "Odblokuj wszystkie",
+    "Log of lockouts": "Dziennik blokad",
+    "No lockouts yet.": "Na razie nie było blokad.",
+    "The last %d lockouts.": "Ostatnie blokady (do %d).",
+    "Time": "Czas",
+    "User name tried": "Podana nazwa użytkownika",
+    "Where": "Gdzie",
+    "longer lockout": "dłuższa blokada",
+    "Empty the log": "Wyczyść dziennik",
+    "The user name or password is incorrect.": "Nazwa użytkownika lub hasło są nieprawidłowe.",
+    "[%s] Login lockout": "[%s] Blokada logowania",
+    "Address: %s": "Adres: %s",
+    "User name tried: %s": "Podana nazwa użytkownika: %s",
+    "Where: %s": "Gdzie: %s",
+    "Locked out until: %s": "Zablokowany do: %s",
+    "Unlock: Settings → MG Stealth → Login attempts, or WP-CLI \\\"wp mg-stealth unlock <address>\\\".":
+        "Odblokowanie: Ustawienia → MG Stealth → Próby logowania albo WP-CLI „wp mg-stealth unlock <adres>”.",
+    "The login address \\\"%s\\\" cannot be used: use at least 3 letters, digits or hyphens, nothing starting with \\\"wp-\\\" and no WordPress address (feed, page, search, sitemap…).":
+        "Adresu logowania „%s” nie można użyć: wpisz co najmniej 3 litery, cyfry lub myślniki, nic zaczynającego się od „wp-” i żadnego adresu WordPressa (feed, page, search, sitemap…).",
+    "The login address \\\"%s\\\" is already one of the neutral paths (Paths tab); choose another one.":
+        "Adres logowania „%s” jest już jedną z neutralnych ścieżek (zakładka Ścieżki); wybierz inny.",
+    "A real file or folder \\\"%s\\\" exists in the site root; choose another login address.":
+        "W katalogu głównym strony istnieje plik lub katalog „%s”; wybierz inny adres logowania.",
+    "A page or post with the address \\\"%s\\\" already exists; choose another login address or change its address.":
+        "Istnieje już strona lub wpis o adresie „%s”; wybierz inny adres logowania albo zmień jej adres.",
+    "A category, tag or other term \\\"%s\\\" already exists; choose another login address.":
+        "Istnieje już kategoria, tag lub inny termin „%s”; wybierz inny adres logowania.",
+    "The address \\\"%s\\\" is already used by WordPress or another plugin (a registered route); choose another login address.":
+        "Adres „%s” jest już używany przez WordPressa albo inną wtyczkę (zarejestrowana ścieżka); wybierz inny adres logowania.",
+    "The login address \\\"/%s/\\\" is easy to guess: bots try it first, so it hides the login less than a random address. It works and wp-login.php stays the 404 page; use a strong password and brute-force protection: the lockout after failed logins (Login attempts tab), ideally two-factor authentication too.":
+        "Adres logowania „/%s/” łatwo odgadnąć: boty sprawdzają go w pierwszej kolejności, więc ukrywa logowanie słabiej niż losowy adres. Działa, a wp-login.php nadal jest stroną 404; używaj silnych haseł i ochrony przed zgadywaniem haseł: blokady po nieudanych logowaniach (zakładka Próby logowania), najlepiej też logowania dwuskładnikowego.",
+}
+
+PL_PLURAL = {
+    "Too many failed login attempts. Try again in %d minute.": (
+        "Zbyt wiele nieudanych prób logowania. Spróbuj ponownie za %d minutę.",
+        "Zbyt wiele nieudanych prób logowania. Spróbuj ponownie za %d minuty.",
+        "Zbyt wiele nieudanych prób logowania. Spróbuj ponownie za %d minut.",
+    ),
 }
 
 
 def po_string(text: str) -> str:
     return '"' + text + '"'
+
+
+VERSION = re.search(r"^ \* Version: *(\S+)", (ROOT / "mg-stealth.php").read_text(encoding="utf-8"), re.M).group(1)
 
 
 def main() -> int:
@@ -246,7 +347,7 @@ def main() -> int:
         '# This file is distributed under the GPL-2.0-or-later.',
         'msgid ""',
         'msgstr ""',
-        '"Project-Id-Version: MG Stealth 1.0.0\\n"',
+        '"Project-Id-Version: MG Stealth ' + VERSION + '\\n"',
         '"Report-Msgid-Bugs-To: https://github.com/MGraphics/mg-stealth/issues\\n"',
         '"Last-Translator: MGraphics\\n"',
         '"Language-Team: MGraphics\\n"',
@@ -268,6 +369,19 @@ def main() -> int:
         if msgid == '':
             continue
         comments = [line for line in block.split('\n') if line.startswith('#')]
+        plural = re.search(r'^msgid_plural ((?:"(?:[^"\\]|\\.)*"\n?)+)', block, re.M)
+        if plural:
+            forms = PL_PLURAL.get(msgid)
+            if forms is None:
+                missing.append(msgid)
+                forms = ('', '', '')
+            out.extend(comments)
+            out.append('msgid ' + po_string(msgid))
+            out.append('msgid_plural ' + po_string(''.join(re.findall(r'"((?:[^"\\]|\\.)*)"', plural.group(1)))))
+            for n, form in enumerate(forms):
+                out.append('msgstr[%d] ' % n + po_string(form))
+            out.append('')
+            continue
         translated = PL.get(msgid)
         if translated is None:
             missing.append(msgid)
