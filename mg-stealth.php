@@ -3,7 +3,7 @@
  * Plugin Name:       MG Stealth
  * Plugin URI:        https://github.com/MGraphics/mg-stealth
  * Description:       Makes it hard to tell that a site runs WordPress: clean page source and headers, neutral public paths, a private login address, a lockout after failed logins, closed REST API for guests, the normal 404 page for typical WordPress addresses and one-hop 301 redirects to https and the main host name.
- * Version:           1.0.1
+ * Version:           1.0.2
  * Requires at least: 6.4
  * Requires PHP:      7.4
  * Author:            MGraphics
@@ -19,7 +19,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'MG_STEALTH_VERSION', '1.0.1' );
+define( 'MG_STEALTH_VERSION', '1.0.2' );
 define( 'MG_STEALTH_FILE', __FILE__ );
 define( 'MG_STEALTH_DIR', plugin_dir_path( __FILE__ ) );
 define( 'MG_STEALTH_BASENAME', plugin_basename( __FILE__ ) );

@@ -60,3 +60,4 @@ require dirname( __DIR__, 2 ) . '/includes/class-htaccess.php';
 require dirname( __DIR__, 2 ) . '/includes/class-redirect-rules.php';
 require dirname( __DIR__, 2 ) . '/includes/class-settings.php';
 require dirname( __DIR__, 2 ) . '/includes/class-lockout.php';
+require dirname( __DIR__, 2 ) . '/includes/class-login.php';

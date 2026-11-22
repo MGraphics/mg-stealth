@@ -18,7 +18,7 @@ Download `mg-stealth-<version>.zip` from the [latest release](https://github.com
 |---|---|---|
 | Page source | generator tags, RSD, wlwmanifest, shortlink, pingback, REST/oEmbed links, emoji, speculation rules, `?ver=` → per-site hash, `X-Powered-By`, `X-Pingback`, `X-Redirect-By`, REST `Link` headers, 1984 `Expires`, asset tag ids, theme body classes, HTML comments, `sourceURL` comments, login page and e-mail branding | on |
 | Paths | `/wp-content/`, `/wp-includes/`, plugins, uploads, `admin-ajax.php`, `wp-comments-post.php`, `/wp-json/` under per-site neutral names (managed `.htaccess` block, verified before use), hashed plugin/theme folder names, original paths 404 for guests, `wp-config.php` snippet for a real move | off |
-| Login | private login address (random by default, or a simple word such as `login`, saved with a warning); `wp-login.php` and `/wp-admin/` for guests → the site's 404 page; login links on public pages point home | off |
+| Login | private login address (random by default, or a simple word such as `login`, saved with a warning); `wp-login.php` and `/wp-admin/` for guests → the site's 404 page; signed-in users opening it go straight to the dashboard; login links on public pages point home | off |
 | Access | REST API for guests only on an allow-list; 404 for XML-RPC, core files, authors, direct `wp-cron.php`, `/login` `/admin` `/dashboard`, embeds, (optional) feeds; sitemap at `/sitemap.xml` | on (feeds off) |
 | Redirects | one 301 to `https://` and the host of the site address (with or without `www`), path and query kept, `/.well-known/` excluded, `X-Forwarded-Proto` and Cloudflare `CF-Visitor` aware | off |
 | Login attempts | lockout after failed logins (4 attempts → 20 min, 4 lockouts → 24 h, reset after 12 h, adjustable), per IP and optionally per user name; login form, XML-RPC, application passwords; generic error message; trusted proxies / Cloudflare; allow- and deny-list; log with unlock; optional e-mail; import from Limit Login Attempts Reloaded | off |
@@ -52,7 +52,7 @@ The repository must stay **public**, otherwise sites cannot read the releases wi
 bin/dev-setup.sh                         # WordPress 7.1 + MariaDB in Docker, http://127.0.0.1:8476
 composer install && vendor/bin/phpunit   # unit tests
 tests/integration/probe.sh http://127.0.0.1:8476 /tmp/probe   # anonymous curl matrix
-tests/integration/login.sh http://127.0.0.1:8476 <slug> admin <password> [--lockout 4]   # login address / lockout
+[EDITOR=redaktor:<pw>] [SUBSCRIBER=<login>:<pw>] tests/integration/login.sh http://127.0.0.1:8476 <slug> admin <password> [--lockout 4]   # login address (guest vs signed in) / lockout
 tests/build/update-check.sh build/mg-stealth-<v>.zip   # built package: update check (needs wp-cli + MySQL)
 bin/build.sh                             # build/mg-stealth-<v>.zip and build/mg-stealth-<v>-wporg.zip
 bin/i18n.sh                              # .pot, Polish .po/.mo

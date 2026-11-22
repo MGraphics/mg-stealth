@@ -4,7 +4,7 @@ Tags: security, hide wordpress, login, rest api, htaccess
 Requires at least: 6.4
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.0.1
+Stable tag: 1.0.2
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -34,6 +34,7 @@ MG Stealth removes the usual signs of WordPress from what a visitor (or a scanne
 
 * The login form moves to a private address that is never printed on public pages.
 * `wp-login.php` and the admin area (for visitors without a session) answer with the site's normal 404 page.
+* Signed-in users who open the login address go straight to the dashboard (or to the profile page, if they cannot edit posts); everyone else gets the login form.
 * Any free address works, a random one (the default, e.g. `/k3x9-panel-q8m2/`) or a simple word such as `/login/`; a simple word is saved with a warning, as bots try it first. Addresses already used by a page, post, term, route, real folder or one of the neutral paths are refused.
 
 **Lockout after failed logins**
@@ -62,7 +63,7 @@ No data is sent anywhere, no credit link is printed, nothing is tracked.
 
 = Po polsku =
 
-MG Stealth utrudnia rozpoznanie, że strona działa na WordPressie: czyści źródło strony i nagłówki, nadaje neutralne nazwy katalogom /wp-content/, /wp-includes/ i /wp-json/, przenosi logowanie pod prywatny adres (losowy albo prosty, np. /login/), blokuje logowanie po kilku nieudanych próbach (zamiast Limit Login Attempts Reloaded), zamyka REST API dla gości (z listą wyjątków dla formularzy), a typowe adresy WordPressa (xmlrpc.php, readme.html, ?author=1, wp-cron.php …) odpowiadają zwykłą stroną 404. Opcjonalnie przekierowuje jednym krokiem 301 z http na https i z www na domenę bez www (lub odwrotnie). Zakładka „Sprawdź” pokazuje, co jeszcze zdradza WordPressa. Każdą funkcję można wyłączyć, a wyłączenie wtyczki przywraca ustawienia domyślne. Wtyczka jest w pełni przetłumaczona na polski.
+MG Stealth utrudnia rozpoznanie, że strona działa na WordPressie: czyści źródło strony i nagłówki, nadaje neutralne nazwy katalogom /wp-content/, /wp-includes/ i /wp-json/, przenosi logowanie pod prywatny adres (losowy albo prosty, np. /login/; zalogowanych kieruje od razu do kokpitu), blokuje logowanie po kilku nieudanych próbach (zamiast Limit Login Attempts Reloaded), zamyka REST API dla gości (z listą wyjątków dla formularzy), a typowe adresy WordPressa (xmlrpc.php, readme.html, ?author=1, wp-cron.php …) odpowiadają zwykłą stroną 404. Opcjonalnie przekierowuje jednym krokiem 301 z http na https i z www na domenę bez www (lub odwrotnie). Zakładka „Sprawdź” pokazuje, co jeszcze zdradza WordPressa. Każdą funkcję można wyłączyć, a wyłączenie wtyczki przywraca ustawienia domyślne. Wtyczka jest w pełni przetłumaczona na polski.
 
 == Installation ==
 
@@ -129,6 +130,9 @@ No. The check only asks your own site. The build distributed on GitHub looks for
 
 == Changelog ==
 
+= 1.0.2 =
+* Opening the private login address while signed in now goes straight to the dashboard instead of showing the login form again (a 302 that is not cached; to an allowed `redirect_to` address when one is given, to the profile page for users who cannot edit posts, as WordPress does after signing in). Logout, lost password, password reset, registration, protected posts, confirmations, re-authentication (`reauth=1`) and the login window in the admin area work as before. Addresses on the deny-list still get the normal 404 page.
+
 = 1.0.1 =
 * The private login address may now be a simple word such as `login`, `panel` or `admin` (at least 3 characters). It is saved with a warning that it is easy to guess. Addresses starting with "wp-", WordPress' own addresses (feed, page, search, sitemap …) and addresses already used by a page, post, term, registered route, real folder or neutral path are refused with a message. New installs still get a random address.
 * With the address `login`, `/login/` shows the login form (with the MG Login design when that plugin is active); `wp-login.php`, `/wp-admin/` for visitors, `/admin/` and `/dashboard/` stay the normal 404 page. The check expects 200 for the chosen address and no longer counts it as a leaked shortcut.
@@ -140,6 +144,9 @@ No. The check only asks your own site. The build distributed on GitHub looks for
 * First release: clean page source and headers, neutral paths with a managed .htaccess block, private login, REST API allow-list, 404 for typical WordPress addresses, neutral sitemap, one-hop https/www redirects, self-check, emergency switch, Polish translation.
 
 == Upgrade Notice ==
+
+= 1.0.2 =
+The login address takes signed-in users straight to the dashboard.
 
 = 1.0.1 =
 Fixes a fatal error when checking for updates; simple login addresses such as /login/; lockout after failed logins.

@@ -108,6 +108,7 @@ final class Login {
 	 * Serves WordPress' login file at the private address.
 	 */
 	private function render_login(): void {
+		$this->redirect_signed_in();
 		// The login file reads these as globals.
 		global $error, $interim_login, $action, $user_login;
 		$user_login = '';
@@ -116,6 +117,63 @@ final class Login {
 			ob_start( array( Plugin::instance()->cleaner(), 'filter_output' ) );
 		}
 		require_once ABSPATH . 'wp-login.php';
+		exit;
+	}
+
+	/**
+	 * Whether a request for the login address should skip the form for a signed-in user: only a
+	 * plain GET of the login form, not the re-authentication form, the interim (modal) login, the
+	 * "check your e-mail" notice or any other action (logout, lost password, password reset,
+	 * registration, protected posts, confirmations).
+	 *
+	 * @param array  $query  Query arguments ($_GET).
+	 * @param string $method Request method.
+	 * @return bool
+	 */
+	public static function skips_form( array $query, string $method ): bool {
+		if ( 'GET' !== strtoupper( $method ) && 'HEAD' !== strtoupper( $method ) ) {
+			return false;
+		}
+		$action = $query['action'] ?? '';
+		if ( '' !== $action && 'login' !== $action ) {
+			return false;
+		}
+		foreach ( array( 'reauth', 'interim-login', 'customize-login', 'checkemail' ) as $key ) {
+			if ( ! empty( $query[ $key ] ) ) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	/**
+	 * A signed-in user who opens the login address goes straight to the admin area (or to an
+	 * allowed redirect_to address), the same place WordPress sends them after signing in.
+	 */
+	private function redirect_signed_in(): void {
+		// phpcs:disable WordPress.Security.NonceVerification.Recommended -- Read-only, the same arguments core's login form reads.
+		$method = isset( $_SERVER['REQUEST_METHOD'] ) ? sanitize_text_field( wp_unslash( $_SERVER['REQUEST_METHOD'] ) ) : 'GET';
+		if ( ! is_user_logged_in() || ! self::skips_form( wp_unslash( $_GET ), $method ) ) {
+			return;
+		}
+		// Denied addresses keep getting the normal 404 page from the lockout, signed in or not.
+		if ( Lockout::enabled() && Lockout::is_denied( ( new Lockout() )->ip() ) ) {
+			return;
+		}
+		$user      = wp_get_current_user();
+		$requested = isset( $_GET['redirect_to'] ) && is_string( $_GET['redirect_to'] ) ? esc_url_raw( wp_unslash( $_GET['redirect_to'] ) ) : '';
+		// phpcs:enable
+		$target = '' !== $requested ? $requested : admin_url();
+		/** This filter is documented in wp-login.php */
+		$target = (string) apply_filters( 'login_redirect', $target, $requested, $user ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- Core's own filter.
+		if ( '' === $target || 'wp-admin/' === $target || admin_url() === $target ) {
+			if ( ! $user->has_cap( 'edit_posts' ) ) {
+				$target = $user->has_cap( 'read' ) ? admin_url( 'profile.php' ) : home_url( '/' );
+			}
+		}
+		$target = wp_validate_redirect( $target, admin_url() );
+		nocache_headers();
+		wp_safe_redirect( $target, 302 );
 		exit;
 	}
 
